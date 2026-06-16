@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from prometheus_client import Counter, Gauge
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -216,6 +217,16 @@ def delete_marker(marker_id: str):
         db.commit()
     sim._event("info", "CMD", f'Watch marker removed: "{desc}".')
     return {"ok": True}
+
+
+@app.get("/api/frames/{name}")
+async def get_frame(name: str):
+    """Proxy a sensor-frame image from the ai-service to the browser."""
+    res = await ai_client.fetch_frame(name)
+    if not res:
+        raise HTTPException(status_code=404, detail="frame not available")
+    content, media_type = res
+    return Response(content=content, media_type=media_type, headers={"Cache-Control": "public, max-age=3600"})
 
 
 @app.post("/api/scan")

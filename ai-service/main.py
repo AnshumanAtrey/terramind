@@ -8,6 +8,7 @@ import random
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from prometheus_client import Counter, Histogram
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -84,6 +85,16 @@ def info():
 @app.get("/frames")
 def frames():
     return {"frames": _list_frames(), "image_dir": settings.image_dir}
+
+
+@app.get("/frames/{name}")
+def get_frame(name: str):
+    """Serve a camera-feed image so the console can show what the AI analyzed."""
+    safe = os.path.basename(name)  # prevent path traversal
+    path = os.path.join(settings.image_dir, safe)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail=f"frame not found: {safe}")
+    return FileResponse(path)
 
 
 @app.post("/analyze", response_model=Detection)

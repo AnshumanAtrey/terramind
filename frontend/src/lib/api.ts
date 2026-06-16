@@ -10,6 +10,13 @@ import { CommandSnapshot, ThreatPriority, WatchMarker } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
+/** URL for a sensor-frame image (the actual imagery the AI analyzed), or '' in
+ * simulation mode where frames are synthetic and not servable. */
+export function frameUrl(imageRef: string): string {
+  if (!API || !imageRef) return '';
+  return `${API}/api/frames/${encodeURIComponent(imageRef)}`;
+}
+
 export interface FetchResult {
   snapshot: CommandSnapshot;
   source: 'backend' | 'simulation';

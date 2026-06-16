@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, Rectangle, Circle, Polyline } from 'react-leaflet';
 import type { Drone, Threat } from '@/lib/types';
 import { AO_CENTER, AO_RADIUS_DEG } from '@/lib/mockData';
+import { frameUrl } from '@/lib/api';
 import { DRONE_STATUS_COLOR, PRIORITY_COLOR, THREAT_STATUS_COLOR } from '@/lib/ui';
 
 interface Props {
@@ -112,7 +113,21 @@ export default function TacticalMap({ drones, threats }: Props) {
                 {t.label.toUpperCase()}
               </div>
               <div className="text-ink-dim">GRID {t.gridRef} · {t.confidence}% conf · {t.status.toUpperCase()}</div>
-              <div className="mt-1 max-w-[220px] text-ink">{t.aiSummary}</div>
+              {frameUrl(t.imageRef) && (
+                <div className="mt-1.5">
+                  <div className="mb-0.5 text-[9px] tracking-widest text-cyan">◉ SENSOR FRAME — AI ANALYZED</div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={frameUrl(t.imageRef)}
+                    alt={t.imageRef}
+                    className="w-full max-w-[240px] rounded border border-edge-2"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              <div className="mt-1 max-w-[240px] text-ink">{t.aiSummary}</div>
               <div className="mt-1 text-ink-faint">src {t.detectedBy} · {t.imageRef}</div>
             </div>
           </Popup>

@@ -3,6 +3,7 @@
 import { AlertTriangle, Crosshair, CheckCircle2, ScanLine } from 'lucide-react';
 import type { Threat } from '@/lib/types';
 import { PRIORITY_COLOR, PRIORITY_LABEL, THREAT_STATUS_COLOR, timeAgo } from '@/lib/ui';
+import { frameUrl } from '@/lib/api';
 import { Panel } from './SwarmStatusPanel';
 
 function statusIcon(s: Threat['status']) {
@@ -59,9 +60,22 @@ export function ThreatFeed({ threats }: { threats: Threat[] }) {
                 <span>{t.confidence}%</span>
                 <span className="ml-auto">{timeAgo(t.createdAt)} ago</span>
               </div>
-              <p className="mt-1 line-clamp-2 font-mono text-[10px] leading-snug text-ink-dim">
-                {t.aiSummary}
-              </p>
+              <div className="mt-1 flex gap-2">
+                {frameUrl(t.imageRef) && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={frameUrl(t.imageRef)}
+                    alt=""
+                    className="h-12 w-16 shrink-0 rounded border border-edge/60 object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                )}
+                <p className="line-clamp-3 font-mono text-[10px] leading-snug text-ink-dim">
+                  {t.aiSummary}
+                </p>
+              </div>
               <div className="mt-0.5 font-mono text-[9px] text-ink-faint">
                 {t.detectedBy} · {t.imageRef}
               </div>
