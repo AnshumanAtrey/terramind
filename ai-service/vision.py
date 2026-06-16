@@ -59,6 +59,16 @@ def _build_user_prompt(markers: list[MarkerIn]) -> str:
     )
 
 
+def _mime(b: bytes) -> str:
+    if b[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if b[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if b[:4] == b"RIFF" and b[8:12] == b"WEBP":
+        return "image/webp"
+    return "image/jpeg"
+
+
 def _strip_and_extract_json(text: str) -> dict:
     # MiniMax-M3 emits <think>...</think> reasoning before the answer — drop it.
     t = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
@@ -142,7 +152,7 @@ def analyze(image_bytes: bytes, markers: list[MarkerIn]) -> Detection:
                 "role": "user",
                 "content": [
                     {"type": "text", "text": _build_user_prompt(markers)},
-                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}},
+                    {"type": "image_url", "image_url": {"url": f"data:{_mime(image_bytes)};base64,{b64}"}},
                 ],
             },
         ],

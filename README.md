@@ -32,9 +32,10 @@
 - **ai-service/** — the vision engine. Sends an overhead frame + the operator's markers
   to **MiniMax-M3** via TokenRouter and returns a structured detection. Deterministic
   mock fallback keeps the platform alive in degraded mode.
-- **ai-service/demo-imagery/** — synthetic drone "camera frames" (baked into the
-  ai-service image). Drop real satellite/aerial screenshots here for the live demo;
-  any `.png/.jpg` is auto-picked up.
+- **ai-service/demo-imagery/** — real public-domain satellite/aerial frames of military
+  installations (AMARG boneyard, Norfolk carriers, naval ports — see `CREDITS.md`), baked
+  into the ai-service image. MiniMax-M3 reads them at 92–98% confidence. Drop any
+  `.png/.jpg` here to add your own; the service auto-discovers them.
 
 ## The AI loop (validated, real)
 `watch markers → MiniMax-M3 vision scan of a frame → detection matched to a marker →

@@ -34,9 +34,9 @@ THREATS_INJECTED = Counter("terramind_threats_injected_total", "AI-confirmed thr
 
 # ── DB helpers ───────────────────────────────────────────────────────────────
 DEFAULT_MARKERS = [
-    ("mk-convoy", "Armored vehicle convoy in open terrain", "high"),
-    ("mk-aircraft", "Unauthorized aircraft on runway or apron", "critical"),
-    ("mk-personnel", "Personnel movement near perimeter", "medium"),
+    ("mk-aircraft", "Military aircraft massed on an airfield, apron, or runway", "high"),
+    ("mk-naval", "Naval warships or aircraft carriers at port", "critical"),
+    ("mk-convoy", "Armored vehicle convoy or vehicle staging area", "high"),
 ]
 
 
