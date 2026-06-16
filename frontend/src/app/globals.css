@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  background: #070a0f;
+  color: #e6f0f5;
+  font-feature-settings: 'tnum' 1, 'cv01' 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 70% -10%, rgba(34, 211, 238, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(167, 139, 250, 0.05), transparent 55%);
+}
+
+/* faint grid texture for the command-center feel */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* thin scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #27384b;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #34506b;
+}
+
+/* ─── Leaflet overrides: make the map read like a tactical display ─── */
+.leaflet-container {
+  background: #04070b !important;
+  font-family: inherit;
+}
+.leaflet-control-attribution {
+  background: rgba(7, 10, 15, 0.7) !important;
+  color: #52647a !important;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a {
+  color: #6b8198 !important;
+}
+.leaflet-bar a {
+  background: #0d131c !important;
+  color: #8aa0b2 !important;
+  border-color: #1c2836 !important;
+}
+.leaflet-bar a:hover {
+  background: #111a26 !important;
+  color: #22d3ee !important;
+}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #0d131c !important;
+  color: #e6f0f5 !important;
+  border: 1px solid #27384b !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+}
+.leaflet-popup-content {
+  margin: 10px 12px !important;
+  font-size: 12px;
+}
+
+/* custom drone / threat markers */
+.tm-marker {
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+}
+.tm-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(7, 10, 15, 0.9);
+}
+.tm-threat-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  animation: pulseRing 1.8s ease-out infinite;
+}
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}

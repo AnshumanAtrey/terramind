@@ -1,0 +1,63 @@
+# TerraMind — full local stack. One command: `docker compose up --build`
+# Frontend  → http://localhost:3000
+# Backend   → http://localhost:8000  (/api/command/snapshot, /metrics)
+# AI service→ http://localhost:8001  (/scan, /metrics)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: terramind
+      POSTGRES_PASSWORD: terramind
+      POSTGRES_DB: terramind
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U terramind"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ai-service:
+    build: ./ai-service
+    env_file:
+      - ./ai-service/.env          # holds the TokenRouter key (gitignored)
+    environment:
+      IMAGE_DIR: /app/demo-imagery
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://terramind:terramind@postgres:5432/terramind
+      AI_SERVICE_URL: http://ai-service:8001
+      SCAN_INTERVAL_SEC: "20"
+      AO_CODENAME: AO SENTINEL
+      CORS_ORIGINS: "*"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # the URL the BROWSER uses to reach the backend (host-published port)
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
