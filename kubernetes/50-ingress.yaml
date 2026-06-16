@@ -1,0 +1,29 @@
+# Single entrypoint at http://localhost:8080
+#   /api  → backend  (longest-prefix match wins, so API calls route here)
+#   /     → frontend
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: terramind-ingress
+  namespace: terramind
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000

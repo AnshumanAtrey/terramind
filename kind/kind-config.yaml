@@ -1,0 +1,24 @@
+# TerraMind local Kubernetes cluster (Kind).
+# Maps host :8080 -> ingress :80 so the platform is reachable at http://localhost:8080
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: terramind
+networking:
+  # Bind the API server to 0.0.0.0 so the Colima VM port-forwarder exposes it to
+  # the macOS host (Colima only forwards 0.0.0.0-bound ports, not 127.0.0.1).
+  apiServerAddress: "0.0.0.0"
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 8080
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 8443
+        protocol: TCP
