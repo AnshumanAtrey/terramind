@@ -6,7 +6,7 @@ import random
 
 from PIL import Image, ImageDraw
 
-OUT = os.path.join(os.path.dirname(__file__), "..", "demo-imagery")
+OUT = os.path.join(os.path.dirname(__file__), "demo-imagery")
 os.makedirs(OUT, exist_ok=True)
 
 W, H = 720, 540

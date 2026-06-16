@@ -12,8 +12,9 @@ class Settings(BaseSettings):
     ai_timeout_sec: int = 45
     ai_force_mock: bool = False
 
-    # Where the simulated drone "camera frames" live.
-    image_dir: str = "../demo-imagery"
+    # Where the simulated drone "camera frames" live (inside the service, so they
+    # are baked into the Docker image). Override with IMAGE_DIR in K8s if mounting.
+    image_dir: str = "demo-imagery"
 
     @property
     def live_enabled(self) -> bool:
