@@ -60,7 +60,7 @@ export default function TacticalMap({ drones, threats }: Props) {
   return (
     <MapContainer
       center={[AO_CENTER.lat, AO_CENTER.lon]}
-      zoom={12}
+      zoom={13}
       scrollWheelZoom
       zoomControl
       className="h-full w-full"
@@ -79,7 +79,7 @@ export default function TacticalMap({ drones, threats }: Props) {
       />
 
       {/* range rings from AO center */}
-      {[0.04, 0.08, 0.12].map((r) => (
+      {[0.015, 0.03, 0.045].map((r) => (
         <Circle
           key={r}
           center={[AO_CENTER.lat, AO_CENTER.lon]}

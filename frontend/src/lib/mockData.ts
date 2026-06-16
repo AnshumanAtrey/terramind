@@ -13,9 +13,11 @@ import {
   WatchMarker,
 } from './types';
 
-export const AO_CENTER = { lat: 24.95, lon: 55.18 };
-export const AO_CODENAME = 'AO SENTINEL';
-export const AO_RADIUS_DEG = 0.13; // ~14 km half-span
+// Area of operations: Naval Station Norfolk — real ships/aircraft are visible on
+// the Esri satellite layer here, so flagged contacts land on the actual objects.
+export const AO_CENTER = { lat: 36.943, lon: -76.315 };
+export const AO_CODENAME = 'AO TRIDENT';
+export const AO_RADIUS_DEG = 0.05; // ~5.5 km half-span (the base)
 
 const LETTERS = 'ABCDEFGH';
 

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ai_service_url: str = "http://localhost:8001"
     scan_interval_sec: int = 20
 
-    ao_codename: str = "AO SENTINEL"
+    ao_codename: str = "AO TRIDENT"
     cors_origins: str = "*"  # comma-separated, or "*"
 
 

@@ -19,6 +19,20 @@ async def scan(markers: list[dict]) -> dict | None:
         return None
 
 
+async def analyze_frame(frame: str, markers: list[dict]) -> dict | None:
+    """Analyze a SPECIFIC frame (the target a drone just reached) against the markers."""
+    try:
+        async with httpx.AsyncClient(timeout=settings.scan_interval_sec + 50) as client:
+            r = await client.post(
+                f"{settings.ai_service_url}/analyze",
+                json={"image_ref": frame, "markers": markers},
+            )
+            r.raise_for_status()
+            return r.json()
+    except Exception:
+        return None
+
+
 async def fetch_frame(name: str) -> tuple[bytes, str] | None:
     """Pull a camera-feed image from the ai-service so the backend can proxy it
     to the browser (the ai-service stays internal)."""

@@ -89,15 +89,19 @@ def persist_detection(threat: dict, source: str):
         db.commit()
 
 
-# ── one AI scan: markers -> MiniMax-M3 -> threat injection ───────────────────
-async def run_scan() -> dict:
+# ── scan the target a drone reached: MiniMax-M3 -> flag on the real object ────
+async def scan_target(target_id: str) -> dict:
+    frame = sim.target_frame(target_id)
+    if not frame:
+        return {"detected": False, "reason": "unknown target"}
     markers = active_markers()
-    if not markers:
-        return {"detected": False, "reason": "no active markers"}
-    result = await ai_client.scan([{"description": m["description"], "priority": m["priority"]} for m in markers])
+    result = await ai_client.analyze_frame(
+        frame, [{"description": m["description"], "priority": m["priority"]} for m in markers]
+    )
     if not result:
         sim.ai_engine = "degraded"
         AI_ONLINE.set(0)
+        sim.resolve_scan(target_id, {"detected": False}, None, bump_marker)
         return {"detected": False, "reason": "ai-service unreachable", "degraded": True}
 
     source = result.get("source", "minimax-m3")
@@ -106,11 +110,11 @@ async def run_scan() -> dict:
 
     idx = result.get("matched_marker_index")
     marker_id = markers[idx]["id"] if isinstance(idx, int) and 0 <= idx < len(markers) else None
-    threat = sim.inject_detection(result, result.get("frame", "FRAME"), marker_id, bump_marker)
+    threat = sim.resolve_scan(target_id, result, marker_id, bump_marker)
     if threat:
         persist_detection(threat, source)
         THREATS_INJECTED.labels(priority=threat["priority"]).inc()
-    return {**result, "threat_created": bool(threat)}
+    return {**result, "frame": frame, "threat_created": bool(threat)}
 
 
 # ── background loops ─────────────────────────────────────────────────────────
@@ -125,14 +129,17 @@ async def sim_loop():
 
 
 async def scan_loop():
-    # small head start so the swarm is visibly patrolling before first scan
-    await asyncio.sleep(5)
+    # Drones drive the cadence: when one reaches a target, the sim queues a scan.
+    await asyncio.sleep(4)
     while True:
-        try:
-            await run_scan()
-        except Exception:
-            sim.ai_engine = "degraded"
-        await asyncio.sleep(settings.scan_interval_sec)
+        tid = sim.take_pending()
+        if tid:
+            try:
+                await scan_target(tid)
+            except Exception:
+                sim.ai_engine = "degraded"
+                sim.resolve_scan(tid, {"detected": False}, None, bump_marker)
+        await asyncio.sleep(1.0)
 
 
 @asynccontextmanager
@@ -231,5 +238,9 @@ async def get_frame(name: str):
 
 @app.post("/api/scan")
 async def manual_scan():
-    """Trigger an immediate AI scan — the live demo 'RUN AI SCAN' button."""
-    return await run_scan()
+    """Manually task the nearest un-swept target (demo 'RUN AI SCAN' button)."""
+    tgt = next((t for t in sim.targets if t["status"] == "unscanned"), None)
+    if not tgt:
+        return {"detected": False, "reason": "no un-swept targets right now"}
+    tgt["status"] = "scanning"
+    return await scan_target(tgt["id"])
