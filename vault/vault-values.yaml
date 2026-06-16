@@ -1,0 +1,21 @@
+# HashiCorp Vault Helm values.
+#   helm repo add hashicorp https://helm.releases.hashicorp.com
+#   helm install vault hashicorp/vault -n vault --create-namespace -f vault/vault-values.yaml
+#
+# Dev mode = in-memory, auto-unsealed, root token "root". DEMO ONLY — a real
+# deployment uses standalone/HA with proper unseal + a non-root token.
+
+server:
+  dev:
+    enabled: true
+    devRootToken: "root"
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { memory: 256Mi }
+
+# The Agent Injector mutates annotated pods to inject secrets — no app code change.
+injector:
+  enabled: true
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits: { memory: 128Mi }

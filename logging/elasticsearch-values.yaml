@@ -1,0 +1,33 @@
+# Elastic Helm chart values — single-node Elasticsearch for the demo.
+#   helm repo add elastic https://helm.elastic.co
+#   helm install elasticsearch elastic/elasticsearch -n logging -f logging/elasticsearch-values.yaml
+#
+# NOTE: Elasticsearch is the heavy component (~1–1.5 GB RAM). On the 8 GB demo
+# machine, run logging on its own and capture screenshots (see logging/README.md).
+
+replicas: 1
+minimumMasterNodes: 1
+
+# single-node, security off for a local demo
+esConfig:
+  elasticsearch.yml: |
+    discovery.type: single-node
+    xpack.security.enabled: false
+
+clusterHealthCheckParams: "wait_for_status=yellow&timeout=5s"
+antiAffinity: "soft"
+
+esJavaOpts: "-Xms512m -Xmx512m"
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "1Gi"
+  limits:
+    memory: "1536Mi"
+
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 2Gi

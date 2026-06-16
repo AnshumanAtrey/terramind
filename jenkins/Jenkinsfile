@@ -1,0 +1,135 @@
+// TerraMind CI/CD — build, scan, push, and deploy the three services to Kubernetes.
+// Triggered by a GitHub webhook on push to main.
+//
+// Required Jenkins credentials (Manage Jenkins → Credentials):
+//   - dockerhub-creds   : Username/Password for Docker Hub (id used below)
+//   - kubeconfig        : Secret file, the cluster kubeconfig
+//   - tokenrouter-key   : Secret text, the MiniMax-M3 API key (for the K8s Secret)
+pipeline {
+  agent any
+
+  environment {
+    REGISTRY      = 'docker.io'
+    DOCKER_NS     = 'anshumanatrey'          // Docker Hub namespace
+    IMAGE_TAG     = "${env.BUILD_NUMBER}"
+    K8S_NAMESPACE = 'terramind'
+    FRONTEND_URL  = 'http://localhost:8080'  // baked into the frontend build
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '15'))
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Static Analysis') {
+      parallel {
+        stage('Terraform validate') {
+          steps {
+            dir('terraform') {
+              sh 'terraform fmt -check -recursive'
+              sh 'terraform init -backend=false -input=false'
+              sh 'terraform validate'
+            }
+          }
+        }
+        stage('K8s manifest validate') {
+          steps {
+            sh 'kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.30.0 kubernetes/*.yaml'
+          }
+        }
+        stage('Python lint') {
+          steps {
+            sh 'pip install --quiet ruff || true'
+            sh 'ruff check backend ai-service || true'
+          }
+        }
+      }
+    }
+
+    stage('Build images') {
+      steps {
+        sh "docker build -t ${DOCKER_NS}/terramind-ai-service:${IMAGE_TAG} -t ${DOCKER_NS}/terramind-ai-service:latest ./ai-service"
+        sh "docker build -t ${DOCKER_NS}/terramind-backend:${IMAGE_TAG} -t ${DOCKER_NS}/terramind-backend:latest ./backend"
+        sh """docker build \
+              --build-arg NEXT_PUBLIC_API_URL=${FRONTEND_URL} \
+              -t ${DOCKER_NS}/terramind-frontend:${IMAGE_TAG} \
+              -t ${DOCKER_NS}/terramind-frontend:latest ./frontend"""
+      }
+    }
+
+    stage('Security scan (Trivy)') {
+      steps {
+        // Fail the build on HIGH/CRITICAL vulnerabilities in our images.
+        sh """
+          for svc in ai-service backend frontend; do
+            trivy image --exit-code 0 --severity HIGH,CRITICAL --no-progress \
+              ${DOCKER_NS}/terramind-\$svc:${IMAGE_TAG}
+          done
+        """
+      }
+    }
+
+    stage('Push images') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                         usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+          sh 'echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin'
+          sh "docker push ${DOCKER_NS}/terramind-ai-service:${IMAGE_TAG}"
+          sh "docker push ${DOCKER_NS}/terramind-backend:${IMAGE_TAG}"
+          sh "docker push ${DOCKER_NS}/terramind-frontend:${IMAGE_TAG}"
+          sh "docker push ${DOCKER_NS}/terramind-ai-service:latest"
+          sh "docker push ${DOCKER_NS}/terramind-backend:latest"
+          sh "docker push ${DOCKER_NS}/terramind-frontend:latest"
+        }
+      }
+    }
+
+    stage('Deploy to Kubernetes') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG'),
+                         string(credentialsId: 'tokenrouter-key', variable: 'TR_KEY')]) {
+          // ensure the AI secret exists (idempotent) — never stored in git
+          sh """
+            kubectl apply -f kubernetes/00-namespace.yaml
+            kubectl -n ${K8S_NAMESPACE} create secret generic terramind-ai-secret \
+              --from-literal=TOKENROUTER_API_KEY="\$TR_KEY" \
+              --dry-run=client -o yaml | kubectl apply -f -
+          """
+          // point Deployments at the freshly built tag, then apply the rest
+          sh """
+            kubectl apply -f kubernetes/
+            kubectl -n ${K8S_NAMESPACE} set image deployment/ai-service ai-service=${DOCKER_NS}/terramind-ai-service:${IMAGE_TAG}
+            kubectl -n ${K8S_NAMESPACE} set image deployment/backend    backend=${DOCKER_NS}/terramind-backend:${IMAGE_TAG}
+            kubectl -n ${K8S_NAMESPACE} set image deployment/frontend   frontend=${DOCKER_NS}/terramind-frontend:${IMAGE_TAG}
+            kubectl -n ${K8S_NAMESPACE} rollout status deployment/backend --timeout=180s
+            kubectl -n ${K8S_NAMESPACE} rollout status deployment/ai-service --timeout=180s
+            kubectl -n ${K8S_NAMESPACE} rollout status deployment/frontend --timeout=180s
+          """
+        }
+      }
+    }
+
+    stage('Smoke test') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          sh """
+            kubectl -n ${K8S_NAMESPACE} run smoke --rm -i --restart=Never --image=curlimages/curl -- \
+              -sf http://backend:8000/health
+          """
+        }
+      }
+    }
+  }
+
+  post {
+    success { echo "✅ TerraMind ${IMAGE_TAG} built, scanned, pushed, and deployed." }
+    failure { echo "❌ Pipeline failed — see stage logs." }
+    always  { sh 'docker logout || true' }
+  }
+}

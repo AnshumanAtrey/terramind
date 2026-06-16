@@ -1,0 +1,64 @@
+# Helm values for kube-prometheus-stack (Prometheus + Grafana + Alertmanager).
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm install kps prometheus-community/kube-prometheus-stack \
+#     -n monitoring --create-namespace -f monitoring/values.yaml
+#
+# Trimmed for a small (8 GB) cluster: persistence off, modest resources.
+
+grafana:
+  adminPassword: terramind
+  defaultDashboardsEnabled: true
+  service:
+    type: ClusterIP
+  # The TerraMind dashboard is imported from monitoring/grafana-dashboard.json
+  # (Dashboards → Import), or provisioned via a ConfigMap with the
+  # grafana_dashboard=1 label.
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests: { cpu: 25m, memory: 64Mi }
+
+prometheus:
+  prometheusSpec:
+    retention: 6h
+    resources:
+      requests: { cpu: 100m, memory: 256Mi }
+      limits: { memory: 600Mi }
+    # Discover any pod annotated with prometheus.io/scrape: "true"
+    # (TerraMind backend + ai-service are annotated).
+    additionalScrapeConfigs:
+      - job_name: terramind-pods
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [terramind]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: replace
+            target_label: app
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+
+# Reduce footprint on a constrained cluster.
+nodeExporter:
+  enabled: true
+kubeStateMetrics:
+  enabled: true
+prometheusOperator:
+  resources:
+    requests: { cpu: 50m, memory: 96Mi }

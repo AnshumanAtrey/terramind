@@ -1,0 +1,41 @@
+# Filebeat — DaemonSet that tails every container's stdout/stderr and ships it to
+# Elasticsearch, enriched with Kubernetes metadata (namespace, pod, container).
+#   helm install filebeat elastic/filebeat -n logging -f logging/filebeat-values.yaml
+
+daemonset:
+  filebeatConfig:
+    filebeat.yml: |
+      filebeat.inputs:
+        - type: container
+          paths:
+            - /var/log/containers/*.log
+          processors:
+            - add_kubernetes_metadata:
+                host: ${NODE_NAME}
+                matchers:
+                  - logs_path:
+                      logs_path: "/var/log/containers/"
+
+      # Keep only TerraMind app logs to control index size on the demo cluster.
+      processors:
+        - drop_event:
+            when:
+              not:
+                equals:
+                  kubernetes.namespace: "terramind"
+
+      output.elasticsearch:
+        host: '${NODE_NAME}'
+        hosts: '["http://elasticsearch-master:9200"]'
+        index: "terramind-%{+yyyy.MM.dd}"
+
+      setup.template.name: "terramind"
+      setup.template.pattern: "terramind-*"
+      setup.ilm.enabled: false
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      memory: "256Mi"

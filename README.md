@@ -73,17 +73,36 @@ npm run dev    # http://localhost:3000
 The TokenRouter / MiniMax-M3 key lives only in `ai-service/.env` (gitignored). In
 Kubernetes it is injected by **Vault**, never baked into an image — see the DevOps phase.
 
+## Layout
+```
+frontend/  backend/  ai-service/   # the application (runs natively + Docker)
+kind/  terraform/  kubernetes/      # cluster: config + platform (TF) + app (kubectl)
+jenkins/                            # CI/CD pipeline
+monitoring/  logging/  vault/       # Prometheus+Grafana · ELK · Vault
+disaster-recovery/  docs/           # DR plan · architecture + deployment diagrams
+.github/workflows/                  # CI: terraform validate · kubeconform · build
+```
+
 ## DevOps deliverables — status
 | # | Deliverable | Status |
 |---|-------------|--------|
-| 1 | Working application | ✅ frontend + backend + ai-service |
-| 2 | Source repo (GitHub) | ⏳ next |
+| 1 | Working application | ✅ frontend + backend + ai-service (runs, real MiniMax-M3) |
+| 2 | Source repo (GitHub) | ✅ pushed |
 | 3 | Dockerfiles + images | ✅ all 3 services |
-| 4 | Jenkins CI/CD | ⏳ |
-| 5 | Terraform | ⏳ |
-| 6 | Kubernetes manifests | ⏳ |
-| 7 | Prometheus + Grafana | ✅ `/metrics` exposed · dashboards ⏳ |
-| 8 | ELK logging | ⏳ |
-| 9 | Vault secrets | ⏳ (key already externalized) |
-| 10–14 | Diagrams, DR plan, screenshots, docs | ⏳ |
+| 4 | Jenkins CI/CD | ✅ `jenkins/Jenkinsfile` (build·scan·push·deploy·smoke) |
+| 5 | Terraform | ✅ `terraform/` — `terraform validate` PASS |
+| 6 | Kubernetes manifests | ✅ `kubernetes/` — kubeconform 18/18 valid |
+| 7 | Prometheus + Grafana | ✅ `/metrics` + scrape config + dashboard JSON |
+| 8 | ELK logging | ✅ `logging/` ES + Kibana + Filebeat values |
+| 9 | Vault secrets | ✅ `vault/` policy + k8s-auth + agent injection |
+| 10 | Architecture diagram | ✅ `docs/architecture.md` (mermaid) |
+| 11 | Deployment diagram | ✅ `docs/deployment.md` (mermaid) |
+| 12 | Disaster Recovery plan | ✅ `disaster-recovery/DR-PLAN.md` |
+| 13 | Demonstration screenshots | ⏳ captured from native app + per-component runs |
+| 14 | Project documentation | ✅ this README + per-component READMEs |
+
+> **Validation:** All infra is statically validated (`terraform validate`, `kubeconform`,
+> JSON/YAML parse) locally and in CI (`.github/workflows/validate.yml`). The full stack
+> is not run all-at-once on the 8 GB dev machine by design — components are brought up
+> individually for screenshots (see each component's README).
 ```

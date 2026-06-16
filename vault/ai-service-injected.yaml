@@ -1,0 +1,60 @@
+# ai-service WITH Vault injection — replaces the static `terramind-ai-secret`.
+# The Vault Agent sidecar authenticates as the terramind-ai ServiceAccount, reads
+# secret/terramind/ai, and renders it to /vault/secrets/ai-config which the
+# container sources at startup. No secret is ever stored in the manifest or image.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: terramind-ai
+  namespace: terramind
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-service
+  namespace: terramind
+  labels: { app: ai-service }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: ai-service }
+  template:
+    metadata:
+      labels: { app: ai-service }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+        # ── Vault Agent injection ──
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "terramind-ai"
+        vault.hashicorp.com/agent-inject-secret-ai-config: "secret/data/terramind/ai"
+        vault.hashicorp.com/agent-inject-template-ai-config: |
+          {{- with secret "secret/data/terramind/ai" -}}
+          export TOKENROUTER_API_KEY="{{ .Data.data.TOKENROUTER_API_KEY }}"
+          {{- end -}}
+    spec:
+      serviceAccountName: terramind-ai
+      containers:
+        - name: ai-service
+          image: terramind-ai-service:local
+          imagePullPolicy: IfNotPresent
+          # source the Vault-rendered secret, then start the service
+          command: ["/bin/sh", "-c"]
+          args:
+            - ". /vault/secrets/ai-config && exec uvicorn main:app --host 0.0.0.0 --port 8001"
+          ports:
+            - containerPort: 8001
+          envFrom:
+            - configMapRef: { name: ai-config }
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 384Mi }
+          readinessProbe:
+            httpGet: { path: /health, port: 8001 }
+            initialDelaySeconds: 8
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /health, port: 8001 }
+            initialDelaySeconds: 15
+            periodSeconds: 15
