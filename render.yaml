@@ -1,0 +1,62 @@
+# Render Blueprint — deploys the REAL backend + AI service as always-on containers
+# so the Vercel frontend can talk to live MiniMax-M3 (not just the in-browser sim).
+# Render → New → Blueprint → pick this repo. Then set the TOKENROUTER_API_KEY secret.
+#
+# NOTE (verify in dashboard after first deploy):
+#   - Render injects $PORT; the dockerCommand below binds uvicorn to it.
+#   - AI_SERVICE_URL uses Render's internal service address (fromService).
+#   - DATABASE_URL comes from the managed Postgres; SQLAlchemy needs the
+#     postgresql+psycopg2:// scheme — if Render hands a bare postgres:// URL,
+#     override DATABASE_URL in the dashboard with the +psycopg2 form.
+#   - Free web services spin down after ~15 min idle (cold start on next hit).
+#     Fine for an active webinar; ping /health to keep warm.
+
+databases:
+  - name: terramind-db
+    plan: free
+
+services:
+  - type: web
+    name: terramind-ai-service
+    runtime: docker
+    dockerfilePath: ./ai-service/Dockerfile
+    dockerContext: ./ai-service
+    plan: free
+    dockerCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: AI_FORCE_MOCK
+        value: "false"
+      - key: AI_MODEL
+        value: MiniMax-M3
+      - key: TOKENROUTER_BASE_URL
+        value: https://api.tokenrouter.com/v1
+      - key: IMAGE_DIR
+        value: /app/demo-imagery
+      - key: TOKENROUTER_API_KEY
+        sync: false   # set this secret in the Render dashboard (never in git)
+
+  - type: web
+    name: terramind-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    dockerCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: terramind-db
+          property: connectionString
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: terramind-ai-service
+          property: hostport
+      - key: SCAN_INTERVAL_SEC
+        value: "20"
+      - key: AO_CODENAME
+        value: AO TRIDENT
+      - key: CORS_ORIGINS
+        value: "*"

@@ -1,0 +1,37 @@
+# Jenkins Configuration-as-Code: admin user + a pre-seeded pipeline job that pulls
+# this repo and runs jenkins/Jenkinsfile.local. Boots ready to "Build Now".
+# (Job clones over https — needs the repo PUBLIC, which it is.)
+jenkins:
+  systemMessage: "TerraMind CI/CD — demo controller"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: admin
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+unclassified:
+  location:
+    url: "http://localhost:8081/"
+
+jobs:
+  - script: |
+      pipelineJob('terramind-ci') {
+        description('TerraMind CI — checkout + terraform validate + kubeconform + python lint')
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('https://github.com/AnshumanAtrey/terramind.git') }
+                branches('main')
+              }
+            }
+            scriptPath('jenkins/Jenkinsfile.local')
+            lightweight(true)
+          }
+        }
+      }

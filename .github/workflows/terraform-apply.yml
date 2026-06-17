@@ -1,0 +1,55 @@
+name: terraform-apply
+
+# Proves deliverable #5 is not just `validate` but actually APPLIES: provisions the
+# platform layer (3 namespaces + metrics-server + ingress-nginx) into a real kind
+# cluster on GitHub's runner, shows the created resources, then destroys cleanly.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "kind/**"
+      - ".github/workflows/terraform-apply.yml"
+  workflow_dispatch:
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create kind cluster (with ingress-ready node label)
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: terramind
+          config: kind/kind-config.yaml
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: terraform init + apply (against kind)
+        working-directory: terraform
+        run: |
+          terraform init -input=false
+          terraform apply -auto-approve -input=false \
+            -var "kubeconfig=$HOME/.kube/config" \
+            -var "kube_context=kind-terramind"
+
+      - name: Show provisioned platform (the proof)
+        run: |
+          echo "== terraform-managed namespaces =="
+          kubectl get ns monitoring logging vault
+          echo "== metrics-server (HPA dependency) =="
+          kubectl -n kube-system get deploy metrics-server
+          echo "== ingress-nginx controller =="
+          kubectl -n ingress-nginx get deploy,svc
+          echo "== terraform state =="
+          terraform -chdir=terraform state list
+
+      - name: terraform destroy (clean up)
+        if: always()
+        working-directory: terraform
+        run: |
+          terraform destroy -auto-approve -input=false \
+            -var "kubeconfig=$HOME/.kube/config" \
+            -var "kube_context=kind-terramind" || true
