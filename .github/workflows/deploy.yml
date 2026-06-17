@@ -130,20 +130,21 @@ jobs:
         if: always()
         run: |
           mkdir -p deploy-evidence
-          kubectl -n $NS get all -o wide            | tee deploy-evidence/get-all.txt
-          kubectl -n $NS get pods -o wide           | tee deploy-evidence/pods.txt
-          kubectl -n $NS get hpa                     > deploy-evidence/hpa.txt 2>&1 || true
+          kubectl -n $NS get all -o wide > deploy-evidence/get-all.txt 2>&1 || true
+          kubectl -n $NS get pods -o wide > deploy-evidence/pods.txt 2>&1 || true
+          kubectl -n $NS get hpa          > deploy-evidence/hpa.txt 2>&1 || true
           kubectl -n $NS get events --sort-by=.lastTimestamp > deploy-evidence/events.txt 2>&1 || true
           kubectl -n $NS logs -l app=backend --tail=120    > deploy-evidence/backend.log 2>&1 || true
           kubectl -n $NS logs -l app=ai-service --tail=120 > deploy-evidence/ai-service.log 2>&1 || true
+          cat deploy-evidence/pods.txt || true
           {
             echo "## TerraMind — Kubernetes deploy proof"
             echo '```'
-            kubectl -n $NS get pods -o wide
+            cat deploy-evidence/pods.txt
             echo '```'
             echo "### Images published to GHCR"
             echo "- ghcr.io/${{ steps.vars.outputs.owner }}/terramind-{ai-service,backend,frontend}:${{ steps.vars.outputs.sha }}"
-          } >> "$GITHUB_STEP_SUMMARY"
+          } >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload evidence artifact
         if: always()

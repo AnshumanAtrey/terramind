@@ -9,6 +9,9 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# public/ may be empty (git doesn't track empty dirs) — ensure it exists so the
+# standalone runner stage's `COPY /app/public` always succeeds.
+RUN mkdir -p public
 ENV NEXT_TELEMETRY_DISABLED=1
 # NEXT_PUBLIC_* is inlined at build time. Point this at the backend URL the
 # BROWSER can reach (the host-published port), e.g. http://localhost:8000.
