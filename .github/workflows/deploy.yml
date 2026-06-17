@@ -1,0 +1,153 @@
+name: deploy
+
+# Uses GitHub's runner (~16GB RAM, far more than a local 2GiB Colima) as a free,
+# disposable server: build + push images to GHCR, spin up a REAL Kubernetes cluster
+# (kind), deploy the whole TerraMind stack, smoke-test it, demonstrate scaling, and
+# upload the proof as downloadable artifacts. This turns deliverables #3/#6 (and the
+# scaling story) from "validated config" into "actually deployed", on every push.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NS: terramind
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute registry vars
+        id: vars
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner=$owner"        >> "$GITHUB_OUTPUT"
+          echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Pre-pull Docker Hub bases (retry to dodge rate limits)
+        run: |
+          pull() { for i in 1 2 3 4; do docker pull "$1" && return 0; echo "retry $i for $1"; sleep 15; done; return 1; }
+          for img in python:3.12-slim node:20-alpine postgres:16-alpine busybox:1.36 curlimages/curl:8.10.1; do
+            pull "$img"
+          done
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build images (kind tag :local + GHCR tags)
+        run: |
+          O=${{ steps.vars.outputs.owner }}; S=${{ steps.vars.outputs.sha }}
+          docker build -t terramind-ai-service:local \
+            -t ghcr.io/$O/terramind-ai-service:$S -t ghcr.io/$O/terramind-ai-service:latest ./ai-service
+          docker build -t terramind-backend:local \
+            -t ghcr.io/$O/terramind-backend:$S -t ghcr.io/$O/terramind-backend:latest ./backend
+          docker build -t terramind-frontend:local \
+            -t ghcr.io/$O/terramind-frontend:$S -t ghcr.io/$O/terramind-frontend:latest ./frontend
+
+      - name: Push images to GHCR (deliverable #3 — published images)
+        run: |
+          O=${{ steps.vars.outputs.owner }}; S=${{ steps.vars.outputs.sha }}
+          for svc in ai-service backend frontend; do
+            docker push ghcr.io/$O/terramind-$svc:$S
+            docker push ghcr.io/$O/terramind-$svc:latest
+          done
+
+      - name: Create kind cluster (real Kubernetes)
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: terramind
+
+      - name: Load images into the cluster
+        run: |
+          for img in terramind-ai-service:local terramind-backend:local terramind-frontend:local \
+                     postgres:16-alpine busybox:1.36 curlimages/curl:8.10.1; do
+            kind load docker-image "$img" --name terramind
+          done
+
+      - name: Install metrics-server (enables HPA)
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+          kubectl -n kube-system patch deployment metrics-server --type=json \
+            -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+          kubectl -n kube-system rollout status deployment/metrics-server --timeout=150s
+
+      - name: Deploy TerraMind
+        run: |
+          kubectl apply -f kubernetes/00-namespace.yaml
+          # AI secret placeholder — CI forces mock mode so no real key/external API is needed.
+          kubectl -n $NS create secret generic terramind-ai-secret \
+            --from-literal=TOKENROUTER_API_KEY=sk-ci-mock-mode \
+            --dry-run=client -o yaml | kubectl apply -f -
+          # force AI_FORCE_MOCK=true for deterministic CI (graceful-degradation path)
+          sed 's/AI_FORCE_MOCK: "false"/AI_FORCE_MOCK: "true"/' kubernetes/20-ai-service.yaml | kubectl apply -f -
+          kubectl apply -f kubernetes/10-postgres.yaml
+          kubectl apply -f kubernetes/30-backend.yaml
+          kubectl apply -f kubernetes/40-frontend.yaml
+
+      - name: Wait for all rollouts
+        run: |
+          for d in postgres ai-service backend frontend; do
+            echo "── waiting for $d ──"
+            kubectl -n $NS rollout status deployment/$d --timeout=180s
+          done
+
+      - name: Smoke test (in-cluster service-to-service)
+        run: |
+          kubectl -n $NS run smoke --image=curlimages/curl:8.10.1 --restart=Never --command -- sleep 600
+          kubectl -n $NS wait --for=condition=Ready pod/smoke --timeout=90s
+          echo "== backend /health =="
+          kubectl -n $NS exec smoke -- curl -sf http://backend:8000/health
+          echo; echo "== ai-service /health =="
+          kubectl -n $NS exec smoke -- curl -sf http://ai-service:8001/health
+          echo; echo "== frontend / (HTTP code) =="
+          kubectl -n $NS exec smoke -- curl -s -o /dev/null -w "%{http_code}\n" http://frontend:3000/
+          echo "== backend snapshot — live swarm running INSIDE k8s =="
+          kubectl -n $NS exec smoke -- curl -sf http://backend:8000/api/command/snapshot | head -c 400; echo
+
+      - name: Scaling demonstration
+        continue-on-error: true
+        run: |
+          echo "== HPA reading live CPU metrics (autoscaling wired) =="
+          kubectl -n $NS get hpa ai-service-hpa
+          sleep 25
+          kubectl -n $NS get hpa ai-service-hpa
+          echo "== manual scale ai-service 1 -> 3 (deterministic scaling proof) =="
+          kubectl -n $NS scale deployment ai-service --replicas=3
+          kubectl -n $NS rollout status deployment/ai-service --timeout=120s
+          kubectl -n $NS get pods -l app=ai-service -o wide
+
+      - name: Collect evidence
+        if: always()
+        run: |
+          mkdir -p deploy-evidence
+          kubectl -n $NS get all -o wide            | tee deploy-evidence/get-all.txt
+          kubectl -n $NS get pods -o wide           | tee deploy-evidence/pods.txt
+          kubectl -n $NS get hpa                     > deploy-evidence/hpa.txt 2>&1 || true
+          kubectl -n $NS get events --sort-by=.lastTimestamp > deploy-evidence/events.txt 2>&1 || true
+          kubectl -n $NS logs -l app=backend --tail=120    > deploy-evidence/backend.log 2>&1 || true
+          kubectl -n $NS logs -l app=ai-service --tail=120 > deploy-evidence/ai-service.log 2>&1 || true
+          {
+            echo "## TerraMind — Kubernetes deploy proof"
+            echo '```'
+            kubectl -n $NS get pods -o wide
+            echo '```'
+            echo "### Images published to GHCR"
+            echo "- ghcr.io/${{ steps.vars.outputs.owner }}/terramind-{ai-service,backend,frontend}:${{ steps.vars.outputs.sha }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8s-deploy-evidence
+          path: deploy-evidence/
