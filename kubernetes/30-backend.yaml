@@ -8,7 +8,7 @@ data:
   DATABASE_URL: "postgresql+psycopg2://terramind:terramind@postgres:5432/terramind"
   AI_SERVICE_URL: "http://ai-service:8001"
   SCAN_INTERVAL_SEC: "20"
-  AO_CODENAME: "AO SENTINEL"
+  AO_CODENAME: "AO TRIDENT"
   CORS_ORIGINS: "*"
 ---
 apiVersion: apps/v1

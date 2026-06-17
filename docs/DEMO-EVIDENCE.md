@@ -64,9 +64,32 @@ T2  RECOVERED     ai_engine_online = 1    (next scan cycle, ~25s)
 The graceful AI fallback is the resilience story: lose the inference engine, the command
 platform keeps operating and self-heals when the engine returns.
 
+## #6 Kubernetes + #3 Images + Scaling — DEPLOYED ON GITHUB'S RUNNER (`.github/workflows/deploy.yml`)
+GitHub Actions is used as a free, disposable server (~16GB RAM, far more than local Colima):
+every push builds + pushes images to GHCR, spins up a **real `kind` Kubernetes cluster**, deploys
+the whole stack, smoke-tests it, and demonstrates scaling. Run `27691560400`: **success**.
+
+```
+SMOKE TEST (in-cluster, service name -> service name):
+  backend  /health  -> {"status":"ok","service":"command-backend"}
+  ai-svc   /health  -> {"status":"ok","service":"ai-inference"}
+  frontend /        -> 200
+  backend snapshot  -> 6 drones patrolling Norfolk, 1 threat, neutralizing — the app runs INSIDE k8s
+
+SCALING (HorizontalPodAutoscaler, autoscaling/v2):
+  ai-service-hpa   cpu: 3%/60%   min 1 max 5   <- metrics-server live, HPA reading real CPU
+  scaled 1 -> 3:   ai-service-...-7tqx7 Running / ...-fs8pf Running / ...-ttk2c Running
+
+IMAGES published to GHCR:
+  ghcr.io/anshumanatrey/terramind-{ai-service,backend,frontend}:<sha> + :latest
+```
+Show: the green run + downloadable `k8s-deploy-evidence` artifact (pods, HPA, logs).
+Note: CI forces AI mock mode (`aiEngine: degraded` is expected) — real MiniMax-M3 is proven live locally above.
+
 ## CI/CD — LIVE on GitHub Actions
-`.github/workflows/validate.yml` runs on every push. Last 4 runs: **success** (validate job,
-~1m40s). Jenkins equivalent is `jenkins/Jenkinsfile` (declarative, portable to a Jenkins server).
+- `validate.yml` — terraform validate + kubeconform + yaml/json checks, green on every push.
+- `deploy.yml` — the full build→push→kind→deploy→smoke→scale pipeline above.
+- Jenkins equivalent: `jenkins/Jenkinsfile` (declarative, portable to a Jenkins server).
 Show: https://github.com/AnshumanAtrey/terramind/actions
 
 ---
