@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: terramind-backend
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+        labels:
+          service: command-backend
+
+  - job_name: terramind-ai-service
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:8001"]
+        labels:
+          service: ai-inference
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

@@ -1,0 +1,35 @@
+name: terramind-monitoring
+# Local Prometheus + Grafana that scrape the LIVE TerraMind backend/AI service
+# running on the host (ports 8000 / 8001). One command to demo deliverable #7:
+#   docker compose -f monitoring/local-stack/docker-compose.yml up -d
+# Grafana: http://localhost:3000  (admin / terramind, or anonymous viewer)
+# Prometheus: http://localhost:9090
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: terramind-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: terramind-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=terramind
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_USERS_DEFAULT_THEME=dark
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - prometheus
