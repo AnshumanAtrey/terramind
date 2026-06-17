@@ -1,0 +1,54 @@
+name: jenkins-smoke
+
+# Proves the Jenkins setup (deliverable #4) actually boots: builds the custom image,
+# starts the controller with the wizard pre-skipped, and confirms JCasC seeded the
+# terramind-ci pipeline job + the pipeline tools (terraform, kubeconform) are present.
+# Runs on GitHub's 16GB runner — reliable, unlike the 2GiB local Colima.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "jenkins/**"
+      - ".github/workflows/jenkins-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Jenkins image (plugins + terraform + kubeconform)
+        run: docker build -t terramind-jenkins ./jenkins
+
+      - name: Boot Jenkins controller
+        run: |
+          docker run -d --name jenkins -p 8080:8080 \
+            -v "$PWD/jenkins/casc.yaml:/var/jenkins_conf/casc.yaml:ro" \
+            terramind-jenkins
+
+      - name: Wait for Jenkins, verify JCasC seeded the pipeline job
+        run: |
+          for i in $(seq 1 48); do
+            if curl -sf -u admin:admin http://localhost:8080/api/json >/dev/null 2>&1; then
+              echo "Jenkins API up after ~$((i*5))s"; break
+            fi
+            sleep 5
+          done
+          echo "== seeded jobs =="
+          curl -sf -u admin:admin 'http://localhost:8080/api/json?tree=jobs[name]'
+          echo
+          curl -sf -u admin:admin 'http://localhost:8080/api/json?tree=jobs[name]' | grep -q 'terramind-ci' \
+            && echo "PASS: terramind-ci pipeline job seeded by JCasC" \
+            || { echo "FAIL: job not seeded"; docker logs jenkins | tail -60; exit 1; }
+
+      - name: Verify pipeline tools baked into the image
+        run: |
+          docker exec jenkins terraform version
+          docker exec jenkins kubeconform -v
+          docker exec jenkins git --version
+
+      - name: Jenkins logs (on failure)
+        if: failure()
+        run: docker logs jenkins | tail -80
