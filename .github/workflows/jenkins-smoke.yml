@@ -37,11 +37,11 @@ jobs:
             sleep 5
           done
           echo "== seeded jobs =="
-          curl -sf -u admin:admin 'http://localhost:8080/api/json?tree=jobs[name]'
-          echo
-          curl -sf -u admin:admin 'http://localhost:8080/api/json?tree=jobs[name]' | grep -q 'terramind-ci' \
+          JOBS=$(curl -sf -u admin:admin http://localhost:8080/api/json)
+          echo "$JOBS" | tr '{' '\n' | grep -o '"name":"[^"]*"' | head
+          echo "$JOBS" | grep -q '"name":"terramind-ci"' \
             && echo "PASS: terramind-ci pipeline job seeded by JCasC" \
-            || { echo "FAIL: job not seeded"; docker logs jenkins | tail -60; exit 1; }
+            || { echo "FAIL: job not seeded"; docker logs jenkins | tail -80; exit 1; }
 
       - name: Verify pipeline tools baked into the image
         run: |
