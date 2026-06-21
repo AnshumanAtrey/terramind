@@ -13,6 +13,8 @@
 *.pyo
 *.db
 *.sqlite3
+# exception: ship the seeded detection log (audit-trail deliverable)
+!backend/terramind.db
 
 # ─── node / next ──────────────────────────────────────────────────────────
 **/node_modules/
