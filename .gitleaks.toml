@@ -23,6 +23,7 @@ paths = [
   '''(^|/)\.env(\.local)?$''',                 # real local secret file (gitignored; absent in CI)
   '''.*\.env\.example$''',
   '''.*secret\.example\.ya?ml$''',
+  '''(^|/)README\.md$''',                       # docs show example/placeholder keys (the leak-demo command); real demo commits to backend/main.py, which stays scanned
 ]
 regexes = [
   '''sk-ci-mock-mode''',                       # placeholder in deploy.yml
