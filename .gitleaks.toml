@@ -1,0 +1,33 @@
+# TerraMind secret-scanning config (gitleaks).
+# Enforced by .github/workflows/secret-scan.yml — CI turns RED if a key is committed.
+title = "TerraMind secret scan"
+
+[extend]
+useDefault = true # keep all of gitleaks' built-in rules (AWS, GCP, private keys, …)
+
+# Deterministically catch TokenRouter / MiniMax / OpenAI-style "sk-…" keys, so the
+# live "I leaked a key in a comment" demo reliably turns the pipeline red.
+[[rules]]
+id = "tokenrouter-sk-key"
+description = "TokenRouter / MiniMax-M3 style API key"
+regex = '''sk-[A-Za-z0-9_\-]{16,}'''
+keywords = ["sk-"]
+
+[allowlist]
+description = "Deps, build output, placeholders, examples and the CI mock are NOT real secrets"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)\.next/''',
+  '''(^|/)\.git/''',
+  '''(^|/)\.env(\.local)?$''',                 # real local secret file (gitignored; absent in CI)
+  '''.*\.env\.example$''',
+  '''.*secret\.example\.ya?ml$''',
+]
+regexes = [
+  '''sk-ci-mock-mode''',                       # placeholder in deploy.yml
+  '''sk-your-tokenrouter-key-here''',          # placeholder in secret.example.yaml
+  '''(?i)your[-_]?(api[-_]?)?key[-_]?here''',
+  '''(?i)replace[-_]?me''',
+  '''admin:admin''',                           # default Jenkins dev cred in CI smoke test
+]

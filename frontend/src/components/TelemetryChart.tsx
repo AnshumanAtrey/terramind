@@ -30,48 +30,52 @@ export function TelemetryChart({ telemetry }: { telemetry: TelemetrySample[] }) 
         </div>
       </div>
 
-      <div className="grid flex-1 grid-rows-2 gap-1 p-2">
-        <div className="min-h-0">
+      <div className="grid min-h-0 flex-1 grid-rows-2 gap-1 p-2">
+        <div className="flex min-h-0 flex-col">
           <Label text="DOWNLINK THROUGHPUT" />
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={telemetry} margin={{ top: 2, right: 4, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="thrpt" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.5} />
-                  <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <YAxis hide domain={['dataMin - 20', 'dataMax + 20']} />
-              <Tooltip content={<TinyTooltip unit="Mbps" k="throughputMbps" />} />
-              <Area
-                type="monotone"
-                dataKey="throughputMbps"
-                stroke="#22d3ee"
-                strokeWidth={1.5}
-                fill="url(#thrpt)"
-                isAnimationActive={false}
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="min-h-0 flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={telemetry} margin={{ top: 2, right: 4, bottom: 0, left: 0 }}>
+                <defs>
+                  <linearGradient id="thrpt" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <YAxis hide domain={['dataMin - 20', 'dataMax + 20']} />
+                <Tooltip content={<TinyTooltip unit="Mbps" k="throughputMbps" />} />
+                <Area
+                  type="monotone"
+                  dataKey="throughputMbps"
+                  stroke="#22d3ee"
+                  strokeWidth={1.5}
+                  fill="url(#thrpt)"
+                  isAnimationActive={false}
+                  dot={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="min-h-0">
+        <div className="flex min-h-0 flex-col">
           <Label text="AI INFERENCE LATENCY" />
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={telemetry} margin={{ top: 2, right: 4, bottom: 0, left: 0 }}>
-              <YAxis hide domain={['dataMin - 50', 'dataMax + 50']} />
-              <Tooltip content={<TinyTooltip unit="ms" k="aiLatencyMs" />} />
-              <Line
-                type="monotone"
-                dataKey="aiLatencyMs"
-                stroke="#a78bfa"
-                strokeWidth={1.5}
-                isAnimationActive={false}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="min-h-0 flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={telemetry} margin={{ top: 2, right: 4, bottom: 0, left: 0 }}>
+                <YAxis hide domain={['dataMin - 50', 'dataMax + 50']} />
+                <Tooltip content={<TinyTooltip unit="ms" k="aiLatencyMs" />} />
+                <Line
+                  type="monotone"
+                  dataKey="aiLatencyMs"
+                  stroke="#a78bfa"
+                  strokeWidth={1.5}
+                  isAnimationActive={false}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </section>

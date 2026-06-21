@@ -1,6 +1,7 @@
 'use client';
 
-import { Radar, Wifi, WifiOff, ShieldAlert } from 'lucide-react';
+import { Radar, Wifi, WifiOff, ShieldAlert, Database } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import type { SystemStatus } from '@/lib/types';
 import { fmtUptime } from '@/lib/ui';
@@ -73,6 +74,13 @@ export function Header({ status, source, degraded }: Props) {
             {source === 'backend' ? 'LIVE' : 'SIM'}
           </span>
         </div>
+
+        <Link
+          href="/detections"
+          className="flex items-center gap-1.5 rounded border border-edge-2 px-2 py-1 font-mono text-[10px] tracking-widest text-ink-dim transition-colors hover:border-cyan/40 hover:text-cyan"
+        >
+          <Database className="h-3 w-3" /> DETECTION LOG
+        </Link>
 
         <div className="font-mono text-sm tabular-nums text-cyan">{clock}</div>
       </div>

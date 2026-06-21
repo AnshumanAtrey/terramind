@@ -6,7 +6,7 @@
 // disaster-recovery demo, the console keeps running in "degraded mode".
 
 import { simEngine } from './mockData';
-import { CommandSnapshot, ThreatPriority, WatchMarker } from './types';
+import { CommandSnapshot, DetectionPage, ThreatPriority, WatchMarker } from './types';
 
 const API = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
@@ -47,6 +47,19 @@ export async function fetchSnapshot(): Promise<FetchResult> {
     snapshot.status.aiEngine = 'degraded';
     return { snapshot, source: 'simulation', degraded: true };
   }
+}
+
+/** The persisted detection log, server-side paginated. Requires the backend
+ * (the audit trail lives in the database; there is none in simulation mode). */
+export async function fetchDetections(
+  page: number,
+  pageSize = 25,
+  priority?: string,
+): Promise<DetectionPage> {
+  if (!API) throw new Error('Detection history requires the backend (set NEXT_PUBLIC_API_URL).');
+  const qs = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
+  if (priority) qs.set('priority', priority);
+  return tryBackend<DetectionPage>(`/api/detections?${qs.toString()}`);
 }
 
 export async function addWatchMarker(

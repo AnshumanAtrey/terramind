@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TerraMind — Project Documentation</title>
+<style>
+  :root{
+    --ink:#0b1620; --accent:#0e7490; --accent-d:#155e63; --cyan:#0891b2;
+    --good:#15803d; --warn:#b45309; --bad:#b91c1c;
+    --g1:#475569; --g2:#64748b; --g3:#94a3b8; --line:#e2e8f0; --bg:#f7fafb;
+  }
+  @page { size:A4; margin:16mm 15mm 15mm 15mm;
+    @bottom-left { content:"TerraMind — Project Documentation"; font-family:"SF Mono",Menlo,monospace; font-size:7pt; color:#94a3b8; }
+    @bottom-right{ content:counter(page) " / " counter(pages); font-family:"SF Mono",Menlo,monospace; font-size:7pt; color:#94a3b8; }
+  }
+  @page :first { margin:0; @bottom-left{content:""} @bottom-right{content:""} }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{ font-family:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif; color:var(--ink); font-size:9.6pt; line-height:1.5; }
+  p{ margin-bottom:6pt; } strong,b{ font-weight:650; }
+  .mono{ font-family:"SF Mono",Menlo,monospace; }
+  h2{ font-size:14pt; font-weight:750; letter-spacing:-0.01em; margin:0 0 3pt; }
+  h2 .n{ font-family:"SF Mono",monospace; color:var(--accent); font-size:11pt; margin-right:8pt; }
+  .sub{ color:var(--g2); font-size:9pt; margin-bottom:9pt; padding-bottom:7pt; border-bottom:1px solid var(--line); }
+  h3{ font-size:10.5pt; font-weight:700; margin:11pt 0 4pt; color:var(--accent-d); }
+  section{ padding:12mm 14mm; page-break-before:always; }
+  ul{ margin:4pt 0 7pt 16pt; } li{ margin-bottom:3pt; }
+
+  /* cover */
+  .cover{ height:297mm; width:210mm; padding:0; position:relative; page-break-after:always; color:#fff;
+    background:linear-gradient(150deg,#06141a 0%,#0c2b30 40%,#0e7490 100%); overflow:hidden; }
+  .cover .grid{ position:absolute; inset:0; background-image:linear-gradient(rgba(125,211,252,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(125,211,252,.07) 1px,transparent 1px); background-size:14mm 14mm; }
+  .cover .ring{ position:absolute; right:-40mm; top:30mm; width:150mm; height:150mm; border:1px solid rgba(125,211,252,.18); border-radius:50%; }
+  .cover .ring.two{ width:110mm; height:110mm; right:-20mm; top:50mm; }
+  .cover .inner{ position:relative; z-index:2; padding:30mm 24mm; display:flex; flex-direction:column; height:100%; }
+  .cover .kick{ font-family:"SF Mono",monospace; font-size:9pt; letter-spacing:0.3em; text-transform:uppercase; color:#a5f3fc; }
+  .cover .rule{ height:3px; width:46mm; background:#67e8f9; margin:10mm 0 9mm; border-radius:2px; }
+  .cover h1{ font-size:46pt; line-height:1.02; font-weight:800; letter-spacing:-0.025em; }
+  .cover h1 .lt{ font-weight:300; color:#a5f3fc; display:block; }
+  .cover .tag{ font-size:13pt; color:#e0f7fb; margin-top:7mm; max-width:140mm; font-weight:400; }
+  .cover .spacer{ flex:1; }
+  .cover .facts{ display:flex; gap:5mm; margin-bottom:8mm; flex-wrap:wrap; }
+  .cover .facts .f{ background:rgba(255,255,255,.08); border:1px solid rgba(165,243,252,.22); border-radius:8px; padding:7pt 11pt; }
+  .cover .facts .f .l{ font-size:7pt; text-transform:uppercase; letter-spacing:0.08em; color:#7dd3fc; }
+  .cover .facts .f .v{ font-family:"SF Mono",monospace; font-size:9pt; color:#fff; margin-top:2pt; }
+  .cover .meta{ font-size:9pt; color:#cffafe; line-height:1.8; border-top:1px solid rgba(165,243,252,.22); padding-top:7mm; }
+  .cover .meta b{ color:#fff; }
+
+  table{ width:100%; border-collapse:collapse; margin:5pt 0 9pt; font-size:8.7pt; }
+  th,td{ text-align:left; padding:4.5pt 8pt; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ background:var(--bg); font-size:7.4pt; text-transform:uppercase; letter-spacing:0.05em; color:var(--g2); }
+  td.svc{ font-family:"SF Mono",monospace; color:var(--accent-d); font-size:8pt; }
+  .ok{ color:var(--good); font-weight:700; }
+  .cfg{ color:var(--warn); font-weight:700; }
+
+  .facts2{ display:flex; gap:5mm; margin:8pt 0; flex-wrap:wrap; }
+  .facts2 .b{ flex:1; min-width:38mm; border:1px solid var(--line); border-radius:7px; padding:8pt 10pt; background:var(--bg); }
+  .facts2 .b .l{ font-size:7pt; text-transform:uppercase; letter-spacing:0.05em; color:var(--g2); }
+  .facts2 .b .v{ font-family:"SF Mono",monospace; font-size:9pt; color:var(--accent-d); margin-top:3pt; word-break:break-word; }
+
+  .steps{ counter-reset:step; }
+  .steps .s{ position:relative; padding:6pt 0 6pt 26pt; border-left:2px solid var(--line); margin-left:8pt; }
+  .steps .s::before{ counter-increment:step; content:counter(step); position:absolute; left:-11pt; top:5pt; width:20pt; height:20pt; background:var(--accent); color:#fff; border-radius:50%; font-size:8.5pt; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .steps .s b{ color:var(--ink); }
+  .steps .s .d{ color:var(--g1); font-size:8.8pt; }
+
+  .note{ background:var(--bg); border-left:3px solid var(--accent); padding:7pt 10pt; margin:8pt 0; font-size:8.7pt; border-radius:0 5px 5px 0; }
+  .cmd{ background:#0b1620; color:#e2e8f0; font-family:"SF Mono",monospace; font-size:8pt; padding:7pt 10pt; border-radius:5px; margin:5pt 0; white-space:pre-wrap; }
+  .cmd .c{ color:#67e8f9; }
+
+  /* figures */
+  .shot{ break-inside:avoid; page-break-inside:avoid; margin:0 0 9mm; }
+  .shot img{ width:100%; display:block; border:1px solid var(--line); border-radius:6px; box-shadow:0 1px 5px rgba(11,22,32,.10); }
+  .shot figcaption{ margin-top:5pt; font-size:8.7pt; color:var(--g1); line-height:1.45; }
+  .fnum{ display:inline-block; font-family:"SF Mono",monospace; font-size:7pt; color:#fff; background:var(--accent); padding:1.5pt 6pt; border-radius:3px; margin-right:6pt; vertical-align:1px; }
+  .shot figcaption b{ color:var(--ink); }
+  .sig{ color:var(--cyan); font-weight:600; }
+  .flow{ font-family:"SF Mono",monospace; font-size:8pt; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:9pt 11pt; color:var(--g1); white-space:pre-wrap; line-height:1.7; margin:6pt 0; }
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────── COVER ───────────────────────── -->
+<div class="cover">
+  <div class="grid"></div>
+  <div class="ring"></div>
+  <div class="ring two"></div>
+  <div class="inner">
+    <div class="kick">DevOps &nbsp;/&nbsp; Case Study 124</div>
+    <div class="rule"></div>
+    <h1>TerraMind<span class="lt">Project Documentation</span></h1>
+    <div class="tag">Autonomous drone-swarm command and geospatial-intelligence platform — a real vision-AI loop wrapped in a complete, demonstrated DevOps lifecycle.</div>
+    <div class="spacer"></div>
+    <div class="facts">
+      <div class="f"><div class="l">Application</div><div class="v">Next.js · FastAPI ×2 · PostgreSQL</div></div>
+      <div class="f"><div class="l">Vision AI</div><div class="v">MiniMax-M3 (TokenRouter)</div></div>
+      <div class="f"><div class="l">Platform</div><div class="v">Docker · Kubernetes · Terraform</div></div>
+      <div class="f"><div class="l">Ops</div><div class="v">Jenkins · Prometheus · Grafana · ELK · Vault</div></div>
+    </div>
+    <div class="meta">
+      <b>Anshuman Atrey</b> &nbsp;·&nbsp; B.Tech CSE 2024–28 &nbsp;·&nbsp; ITM Skills University<br/>
+      Repository &nbsp;<span class="mono">github.com/AnshumanAtrey/terramind</span><br/>
+      Problem Statement 124 &nbsp;·&nbsp; Global Geospatial Intelligence &amp; Earth Observation
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────── 01 OVERVIEW ───────────────────────── -->
+<section>
+  <h2><span class="n">01</span>Project Overview</h2>
+  <div class="sub">What TerraMind is, the problem it answers, and the deliverables at a glance.</div>
+
+  <p><b>TerraMind</b> is a defence-focused realization of the PS-124 geospatial-intelligence brief: an
+  operator defines natural-language <b>watch markers</b> ("naval warships at port", "armored convoy in
+  open terrain"); a real <b>vision AI</b> (MiniMax-M3) scans drone camera frames against them; and
+  confirmed threats trigger an autonomous interceptor response — all running inside a full DevOps
+  ecosystem of containers, orchestration, CI/CD, monitoring, logging, secrets and disaster recovery.</p>
+
+  <p>The drone swarm is simulated; the <b>vision AI is genuinely real</b> — MiniMax-M3 reads public-domain
+  satellite imagery and returns structured detections (verified: it counts vessels and reads terrain
+  correctly). Every confirmed detection is persisted to the database, producing a durable, auditable log
+  of 7,000+ records.</p>
+
+  <h3>The problem PS-124 sets</h3>
+  <p>A worldwide geospatial platform is <i>fragmented across independent systems and manually managed</i>,
+  so it cannot scale, recover from failures, or be observed. The mandate: rebuild it cloud-native, and
+  <b>demonstrate</b> how DevOps tooling automates deployment, scaling, monitoring, recovery and security —
+  including live failure simulations (region outage, pipeline failure, workload spike, cyberattack).</p>
+
+  <div class="facts2">
+    <div class="b"><div class="l">Services</div><div class="v">3 built + PostgreSQL</div></div>
+    <div class="b"><div class="l">Images</div><div class="v">3 (frontend·backend·ai)</div></div>
+    <div class="b"><div class="l">Pods at rest</div><div class="v">5 → 9 under load</div></div>
+    <div class="b"><div class="l">Detections logged</div><div class="v">7,000+ (audit trail)</div></div>
+  </div>
+
+  <h3>Deliverables — status</h3>
+  <table>
+    <thead><tr><th>#</th><th>Deliverable</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Working application</td><td class="ok">LIVE</td><td>frontend + backend + ai-service, real MiniMax-M3</td></tr>
+      <tr><td>2</td><td>Source repository (GitHub)</td><td class="ok">LIVE</td><td>pushed, CI green</td></tr>
+      <tr><td>3</td><td>Dockerfiles + images</td><td class="ok">LIVE</td><td>3 multi-stage images, published to GHCR</td></tr>
+      <tr><td>4</td><td>Jenkins CI/CD pipeline</td><td class="cfg">CONFIG</td><td><span class="mono">jenkins/Jenkinsfile</span> · GitHub Actions runs live</td></tr>
+      <tr><td>5</td><td>Terraform infrastructure</td><td class="ok">APPLIED</td><td>platform layer into Kind cluster</td></tr>
+      <tr><td>6</td><td>Kubernetes manifests</td><td class="ok">DEPLOYED</td><td>all pods Running · HPA 1→3 proven</td></tr>
+      <tr><td>7</td><td>Prometheus + Grafana</td><td class="ok">LIVE</td><td>scraping real app, dashboard on real data</td></tr>
+      <tr><td>8</td><td>ELK logging</td><td class="ok">DEMOED</td><td>Elasticsearch ingest + query-back</td></tr>
+      <tr><td>9</td><td>Vault secrets</td><td class="ok">LIVE</td><td>KV-v2 + k8s-auth + agent injection</td></tr>
+      <tr><td>10</td><td>Architecture diagram</td><td class="ok">DONE</td><td><span class="mono">docs/architecture.md</span></td></tr>
+      <tr><td>11</td><td>Deployment diagram</td><td class="ok">DONE</td><td><span class="mono">docs/deployment.md</span></td></tr>
+      <tr><td>12</td><td>Disaster recovery plan</td><td class="ok">LIVE</td><td><span class="mono">dr-demo.sh</span> — validated</td></tr>
+      <tr><td>13</td><td>Demonstration screenshots</td><td class="ok">DONE</td><td>this document</td></tr>
+      <tr><td>14</td><td>Project documentation</td><td class="ok">DONE</td><td>this document + READMEs</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ───────────────────────── 02 ARCHITECTURE ───────────────────────── -->
+<section>
+  <h2><span class="n">02</span>Architecture &amp; the AI Loop</h2>
+  <div class="sub">How the three services talk, and the validated detect-and-intercept loop.</div>
+
+  <div class="flow">  frontend (Next.js)  ──GET /api/command/snapshot (2s poll)──▶  backend (FastAPI)
+        :3000                                                     swarm sim + AI loop · :8000
+          ▲  camelCase JSON                                         │  frame + active markers
+          └───────────────────────────────────────────────────     ▼
+                                                            ai-service (FastAPI · MiniMax-M3) · :8001
+                                                                     │  detection
+   PostgreSQL  ◀── markers + detection log ── backend  ◀────────────┘   Prometheus /metrics ▲</div>
+
+  <h3>The detect-and-intercept loop (real, validated)</h3>
+  <div class="steps">
+    <div class="s"><b>Operator arms a watch marker.</b><div class="d">Natural-language target (e.g. "naval warships at port"), persisted to PostgreSQL.</div></div>
+    <div class="s"><b>A recon drone reaches a target.</b><div class="d">The backend grabs that overhead frame and the active markers.</div></div>
+    <div class="s"><b>MiniMax-M3 analyses the frame.</b><div class="d">Returns a structured detection (label, confidence, matched marker). If the model/key is unreachable it returns a mock and the engine is marked <i>degraded</i>.</div></div>
+    <div class="s"><b>Confirmed threat is injected.</b><div class="d">Matched to its marker, persisted, and run through <span class="mono">detected → confirmed → intercepting → neutralized</span>, tasking a LANCE interceptor.</div></div>
+    <div class="s"><b>Everything is exposed + counted.</b><div class="d">Via <span class="mono">/api/command/snapshot</span> for the UI and Prometheus <span class="mono">/metrics</span> for monitoring.</div></div>
+  </div>
+
+  <div class="note"><b>Why this shape.</b> The backend is a <b>singleton</b> (owns in-memory swarm state, never autoscaled); the ai-service is <b>stateless</b> (the correct HPA target); the AI is <b>provider-agnostic</b> (base-url + model + key); and the <b>mock fallback</b> is both a dev convenience and the disaster-recovery story.</div>
+</section>
+
+<!-- ───────────────────────── 03 APPLICATION ───────────────────────── -->
+<section>
+  <h2><span class="n">03</span>Application Walkthrough</h2>
+  <div class="sub">The command console, captured live from the running platform.</div>
+
+  <figure class="shot">
+    <img src="screenshots/01-command-center.png" alt="Command center" />
+    <figcaption><span class="fnum">01</span><b>Command console — AO TRIDENT.</b> Six RAVEN/LANCE drones over Naval Station Norfolk on live Esri satellite imagery, AI ENGINE <span class="sig">ONLINE</span>, a threat flagged on the map, and the AI feed showing real MiniMax-M3 detections.</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="screenshots/02-norfolk-zoom.png" alt="Norfolk zoom" />
+    <figcaption><span class="fnum">02</span><b>Zoomed satellite imagery.</b> A recon drone investigating a carrier pier — the actual frame the vision AI analyses.</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="screenshots/03-threat-detection.png" alt="Threat detection" />
+    <figcaption><span class="fnum">03</span><b>Live threat → intercept.</b> A confirmed contact and a LANCE interceptor vectoring in to neutralize it.</figcaption>
+  </figure>
+</section>
+
+<!-- ───────────────────────── 04 IaC + ORCHESTRATION ───────────────────────── -->
+<section>
+  <h2><span class="n">04</span>Infrastructure as Code &amp; Orchestration</h2>
+  <div class="sub">Terraform provisions the platform; Kubernetes runs and heals the workloads.</div>
+
+  <p><b>Terraform</b> declares the Kubernetes <i>platform layer</i> — ingress-nginx, metrics-server (so HPA
+  works) and the monitoring/logging/vault namespaces — into the Kind cluster via the <span class="mono">kubernetes</span>
+  and <span class="mono">helm</span> providers. <b>Kubernetes</b> then runs the three services as pods, self-heals
+  crashes, and autoscales the stateless ai-service on CPU.</p>
+
+  <figure class="shot">
+    <img src="screenshots/08-terraform-apply.png" alt="terraform apply" />
+    <figcaption><span class="fnum">08</span><b>terraform apply.</b> Provisions namespaces, metrics-server and ingress-nginx; <span class="mono">terraform state list</span> confirms the managed resources.</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="screenshots/09-kubernetes-deploy.png" alt="kubernetes deploy" />
+    <figcaption><span class="fnum">09</span><b>Kubernetes deployment.</b> <span class="mono">kubectl get pods</span> all Running, an in-cluster smoke test passing, and HPA autoscaling proven (<span class="sig">1→3</span>).</figcaption>
+  </figure>
+
+  <div class="facts2">
+    <div class="b"><div class="l">Deployments</div><div class="v">4 (fe·be·ai·pg)</div></div>
+    <div class="b"><div class="l">Pods</div><div class="v">5 at rest</div></div>
+    <div class="b"><div class="l">Autoscale</div><div class="v">ai-service 1→5 (HPA)</div></div>
+    <div class="b"><div class="l">Validation</div><div class="v">kubeconform 18/18</div></div>
+  </div>
+</section>
+
+<!-- ───────────────────────── 05 CI/CD ───────────────────────── -->
+<section>
+  <h2><span class="n">05</span>CI/CD Pipeline</h2>
+  <div class="sub">Build → scan → push → deploy → smoke-test, on every push.</div>
+
+  <div class="flow">  git push  →  checkout  →  validate (terraform · kubeconform · gitleaks · lint)
+            →  build 3 images  →  Trivy scan  →  push to registry
+            →  kubectl deploy (rolling)  →  in-cluster smoke test</div>
+
+  <p><b>Jenkins</b> is the named deliverable — a complete, declarative <span class="mono">Jenkinsfile</span> (build,
+  scan, push, deploy, smoke). <b>GitHub Actions</b> is the running proof — it spins a real Kind cluster on
+  every push, deploys the full stack, and proves HPA scaling, with a dedicated <span class="mono">secret-scan</span>
+  (gitleaks) gate that fails the build if a key is ever committed.</p>
+
+  <figure class="shot">
+    <img src="screenshots/10-jenkins-pipeline.png" alt="Jenkins pipeline" />
+    <figcaption><span class="fnum">10</span><b>Jenkins.</b> Boots with JCasC seeding the <span class="mono">terramind-ci</span> pipeline; build / scan / push / deploy tooling baked into the controller image.</figcaption>
+  </figure>
+
+  <div class="note"><b>Security gate, demonstrated live.</b> Leak a fake key in a comment and push — the
+  <span class="mono">secret-scan</span> job turns red, pointing at the exact file and line; remove it and push, it goes green.
+  This answers the PS-124 "cyberattack / secret leakage" simulation with a real, repeatable act.</div>
+</section>
+
+<!-- ───────────────────────── 06 MONITORING ───────────────────────── -->
+<section>
+  <h2><span class="n">06</span>Monitoring &amp; Observability</h2>
+  <div class="sub">Prometheus pulls metrics; Grafana renders them on live data.</div>
+
+  <p>Both Python services expose a <span class="mono">/metrics</span> endpoint (added with one line of
+  instrumentation, plus custom business gauges like <span class="mono">terramind_active_drones</span> and
+  <span class="mono">terramind_neutralized_total</span>). <b>Prometheus</b> scrapes them every 5 seconds into a
+  time-series store; <b>Grafana</b> queries that store and draws the dashboard.</p>
+
+  <figure class="shot">
+    <img src="screenshots/04-grafana-dashboard.png" alt="Grafana dashboard" />
+    <figcaption><span class="fnum">04</span><b>Grafana — live data.</b> AI engine ONLINE, neutralized count climbing, AI scan rate by source (minimax-m3), inference latency p90, and threats by priority.</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="screenshots/05-prometheus-targets.png" alt="Prometheus targets" />
+    <figcaption><span class="fnum">05</span><b>Prometheus — targets UP.</b> Both backend and ai-service scrape targets healthy.</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="screenshots/06-prometheus-graph.png" alt="Prometheus graph" />
+    <figcaption><span class="fnum">06</span><b>Prometheus — metric over time.</b> A live custom metric graphed directly from the time-series store.</figcaption>
+  </figure>
+</section>
+
+<!-- ───────────────────────── 07 SECRETS ───────────────────────── -->
+<section>
+  <h2><span class="n">07</span>Secrets Management — Vault</h2>
+  <div class="sub">The MiniMax key lives in Vault and is injected at runtime — never in an image or git.</div>
+
+  <div class="steps">
+    <div class="s"><b>Stored in Vault.</b><div class="d">The key sits at <span class="mono">secret/terramind/ai</span> (KV-v2), with a least-privilege policy allowing read of that one path only.</div></div>
+    <div class="s"><b>Pod identity.</b><div class="d">The ai-service runs as the <span class="mono">terramind-ai</span> Kubernetes ServiceAccount.</div></div>
+    <div class="s"><b>Agent Injector.</b><div class="d">A mutating webhook adds a <span class="mono">vault-agent</span> sidecar; it authenticates with the pod's ServiceAccount token, which Vault verifies against the Kubernetes API.</div></div>
+    <div class="s"><b>Rendered to memory.</b><div class="d">Vault returns the secret; the sidecar writes it to <span class="mono">/vault/secrets/ai-config</span> on an in-memory tmpfs volume — never to disk.</div></div>
+    <div class="s"><b>Sourced at startup.</b><div class="d">The container sources that file and starts uvicorn with the key in its environment.</div></div>
+  </div>
+
+  <p class="mono" style="font-size:8pt;color:var(--g1)">At rest: AES-256-GCM barrier · master key split by Shamir's Secret Sharing (seal/unseal) · TLS in transit.</p>
+
+  <figure class="shot">
+    <img src="screenshots/07-vault-ui.png" alt="Vault UI" />
+    <figcaption><span class="fnum">07</span><b>HashiCorp Vault (authenticated).</b> The <span class="mono">terramind/</span> KV-v2 secrets engine holding the MiniMax/TokenRouter key.</figcaption>
+  </figure>
+</section>
+
+<!-- ───────────────────────── 08 LOGGING ───────────────────────── -->
+<section>
+  <h2><span class="n">08</span>Centralized Logging — ELK</h2>
+  <div class="sub">Metrics tell you it is healthy; logs tell you exactly what happened.</div>
+
+  <p>Each service's log lines are shipped by <b>Filebeat</b> into <b>Elasticsearch</b>, where they are indexed
+  and searchable in <b>Kibana</b>. Where Prometheus answers <i>"is it healthy?"</i>, ELK answers
+  <i>"what went wrong, and why?"</i> — the two halves of observability.</p>
+
+  <figure class="shot">
+    <img src="screenshots/11-elk-logging.png" alt="ELK logging" />
+    <figcaption><span class="fnum">11</span><b>ELK — centralized logs.</b> Elasticsearch ingest and query-back of TerraMind log lines.</figcaption>
+  </figure>
+</section>
+
+<!-- ───────────────────────── 09 RESILIENCE ───────────────────────── -->
+<section>
+  <h2><span class="n">09</span>Disaster Recovery &amp; Resilience</h2>
+  <div class="sub">Every PS-124 failure maps to a one-command live demo — the platform degrades, never crashes, and recovers.</div>
+
+  <table>
+    <thead><tr><th>Simulated failure</th><th>Action</th><th>Behaviour</th></tr></thead>
+    <tbody>
+      <tr><td>Analytics-pipeline failure</td><td class="svc">kill ai-service</td><td>gauge 1→0, swarm flies on mock detections, auto-recovers ~12s</td></tr>
+      <tr><td>Cloud-region / backend outage</td><td class="svc">kill backend</td><td>UI flips to in-browser simulation, never blanks; reconnects on restart</td></tr>
+      <tr><td>Massive workload spike</td><td class="svc">kubectl scale / HPA</td><td>ai-service scales 1→3 under CPU load</td></tr>
+      <tr><td>Node outage</td><td class="svc">delete pod</td><td>Kubernetes reschedules it within seconds (self-heal)</td></tr>
+      <tr><td>Cyberattack / secret leak</td><td class="svc">commit a key</td><td>gitleaks gate fails CI red, pinpoints the file:line</td></tr>
+    </tbody>
+  </table>
+
+  <div class="cmd"><span class="c"># the headline DR demo — validated live</span>
+./disaster-recovery/dr-demo.sh
+<span class="c"># kill AI → degraded (online=0, swarm still flying) → restart → recovered (online=1)</span></div>
+
+  <div class="note"><b>Framing.</b> Not a DR plan PDF — a <b>chaos menu</b>: any component can be killed live and
+  the platform survives and recovers. The rubric rewards the verb <b>demonstrate</b>.</div>
+</section>
+
+<!-- ───────────────────────── 10 STACK ───────────────────────── -->
+<section>
+  <h2><span class="n">10</span>Technology Stack</h2>
+  <div class="sub">Every tool, its role, and how it is used here.</div>
+
+  <table>
+    <thead><tr><th>Layer</th><th>Tool</th><th>Role in TerraMind</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td class="svc">Next.js 14 · React</td><td>command console, tactical map, detection-log page</td></tr>
+      <tr><td>Backend</td><td class="svc">FastAPI</td><td>swarm simulation + AI scan loop + /metrics</td></tr>
+      <tr><td>Vision AI</td><td class="svc">MiniMax-M3</td><td>multimodal frame analysis via TokenRouter</td></tr>
+      <tr><td>Database</td><td class="svc">PostgreSQL / SQLite</td><td>watch markers + the persisted detection log</td></tr>
+      <tr><td>Containers</td><td class="svc">Docker</td><td>3 multi-stage images + compose for local dev</td></tr>
+      <tr><td>Orchestration</td><td class="svc">Kubernetes (Kind)</td><td>pods, self-heal, HPA autoscaling</td></tr>
+      <tr><td>IaC</td><td class="svc">Terraform</td><td>provisions the cluster platform layer</td></tr>
+      <tr><td>CI/CD</td><td class="svc">Jenkins · GitHub Actions</td><td>build · scan · push · deploy · smoke</td></tr>
+      <tr><td>Monitoring</td><td class="svc">Prometheus · Grafana</td><td>pull metrics → live dashboard</td></tr>
+      <tr><td>Logging</td><td class="svc">ELK</td><td>centralized, searchable logs</td></tr>
+      <tr><td>Secrets</td><td class="svc">Vault</td><td>runtime injection, never in image/git</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:10pt;color:var(--g2);font-size:8.7pt">TerraMind — Case Study 124 · Anshuman Atrey · ITM Skills University ·
+  <span class="mono">github.com/AnshumanAtrey/terramind</span></p>
+</section>
+
+</body>
+</html>

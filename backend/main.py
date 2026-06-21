@@ -19,7 +19,7 @@ import ai_client
 from config import settings
 from database import Base, SessionLocal, engine
 from db_models import DetectionRow, MarkerRow
-from schemas import MarkerCreate, MarkerOut, SnapshotOut
+from schemas import DetectionOut, DetectionPage, MarkerCreate, MarkerOut, SnapshotOut
 from simulation import SwarmSim
 
 sim = SwarmSim(settings.ao_codename)
@@ -176,6 +176,36 @@ def snapshot():
     snap = sim.snapshot()
     snap["markers"] = list_markers()
     return SnapshotOut(**snap)
+
+
+@app.get("/api/detections", response_model=DetectionPage)
+def list_detections(page: int = 1, page_size: int = 25, priority: str | None = None):
+    """The persisted AI detection log (audit trail), server-side paginated so the
+    UI never loads all rows at once."""
+    page = max(1, page)
+    page_size = min(max(1, page_size), 100)
+    with SessionLocal() as db:
+        q = db.query(DetectionRow)
+        if priority:
+            q = q.filter(DetectionRow.priority == priority)
+        total = q.count()
+        rows = (
+            q.order_by(DetectionRow.created_at.desc(), DetectionRow.id.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+            .all()
+        )
+    items = [
+        DetectionOut(
+            id=r.id, label=r.label, confidence=r.confidence, priority=r.priority,
+            status=r.status, grid_ref=r.grid_ref, detected_by=r.detected_by,
+            image_ref=r.image_ref, ai_summary=r.ai_summary, source=r.source,
+            lat=r.lat, lon=r.lon, created_at=r.created_at,
+        )
+        for r in rows
+    ]
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    return DetectionPage(items=items, total=total, page=page, page_size=page_size, total_pages=total_pages)
 
 
 @app.get("/api/markers", response_model=list[MarkerOut])

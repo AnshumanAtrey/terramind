@@ -99,3 +99,28 @@ export interface CommandSnapshot {
   telemetry: TelemetrySample[];
   events: SystemEvent[];
 }
+
+// ─── Persisted detection log (the database audit trail) ────────────────────
+export interface DetectionRecord {
+  id: string;
+  label: string;
+  confidence: number;
+  priority: ThreatPriority;
+  status: string;
+  gridRef: string;
+  detectedBy: string;
+  imageRef: string;
+  aiSummary: string;
+  source: string;
+  lat: number;
+  lon: number;
+  createdAt: number; // epoch ms
+}
+
+export interface DetectionPage {
+  items: DetectionRecord[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

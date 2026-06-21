@@ -1,0 +1,510 @@
+Delivered-To: 2024.anshumana@isu.ac.in
+Received: by 2002:a0c:f9c4:0:b0:8d1:51a4:ff19 with SMTP id j4csp845803qvo; Thu, 11 Jun 2026 22:04:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=5; AFNElJ8aL+GaGbSGItCi2KEMr0LZQCgumlcj5ktBoSxqeQhQN2wHq1tHcBMVGkYQrm4xN8YB0YOwpoY/R6DMbIiWOg==@isu.ac.in
+X-Received: by 2002:a17:903:3ba4:b0:2bf:1fbd:b946 with SMTP id d9443c01a7336-2c40dc4802amr18037675ad.0.1781240693249; Thu, 11 Jun 2026 22:04:53 -0700 (PDT)
+ARC-Seal: i=4; a=rsa-sha256; t=1781240693; cv=pass; d=google.com; s=arc-20240605; b=lVtQ0G0s96BzZnpI/S/XdZtrK1CoCbbHCyjy0IgmYhcbMLAIVBtQydIXSaHm9zRY8h 0Kogx9DavvDtlBAX5jn1JDLQGHnl2kEFdtfY48JXIuKnq4zWCys79PAYpFKYpUP4C0X2 oSuAhSED8OjV7qF8f+2nqtGlaGmk1drgI/UF4xRYtEmRZlRlKYf6HTbMpxh9H5bDGHkx Gua8n1GopeEY8oJytpO+6FYhGOsqUHjKcRKuE2UoV0FbfpiqIlh9lJd9LCbxcsd9sRV9 A10S8xXULvR882lCjHmYt9NZ9jb6uejnzJhjE1DxX6Z8jrBYtb6gpwJSSxzjauGFEW0E tcYw==
+ARC-Message-Signature: i=4; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605; h=list-unsubscribe:list-archive:list-help:list-post:list-id :mailing-list:precedence:to:subject:message-id:date:from :mime-version:dkim-signature; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; fh=6Nf+lx+vtXgkDXHIMRYoCM/tr+b7JV6cXKZihtBPAt4=; b=FHIEVPGb3c0EJdeDF/PibiSW2w0oWtMA17toG1AUVIMN2REHy3VD/+KgNHEBNCS3TN aJ7e12TuzJRsZACionMWEJYAt+YCAtRpElUaH1UfaijRaLcZXw73mZwIrKj8Rq0lQU3z ZE1nxcC7WUEUu63XrMy8TRVHiqN6yE1ARVrF0sIu8EjNmIXvHRhl2Jvk3cuijCMClcKb ciDB1bndle5EKJAdtagyOKcava0b6oMFWZJCbbYzXPSXnbM8+Ebn8DGEZaLljLf/k0Cb BjqNHzTBMjhJH0F5/gL7sFpJ36p6FqmhVDj2/31Rb5zqPtza6XzIG9DMlP0FVC5VnVd8 owDg==; dara=google.com
+ARC-Authentication-Results: i=4; mx.google.com; dkim=pass header.i=@isu-ac-in.20251104.gappssmtp.com header.s=20251104 header.b=hJiZOK4A; arc=pass (i=3 spf=pass spfdomain=itm.edu dkim=pass dkdomain=itm.edu dmarc=pass fromdomain=itm.edu); spf=none (google.com: elonmusk2024+bncbdfzvhpbxmgbb5fgv3iqmgqeh7fompy@isu.ac.in does not designate permitted sender hosts) smtp.mailfrom=elonmusk2024+bncBDFZVHPBXMGBB5FGV3IQMGQEH7FOMPY@isu.ac.in; dmarc=fail (p=NONE sp=NONE dis=NONE arc=pass) header.from=itm.edu; dara=neutral header.i=@isu.ac.in
+Return-Path: <elonmusk2024+bncBDFZVHPBXMGBB5FGV3IQMGQEH7FOMPY@isu.ac.in>
+Received: from mail-sor-f69.google.com (mail-sor-f69.google.com. [209.85.220.69]) by mx.google.com with SMTPS id d9443c01a7336-2c42f4dd9efsor7699335ad.1.2026.06.11.22.04.52 for <2024.anshumana@isu.ac.in> (Google Transport Security); Thu, 11 Jun 2026 22:04:53 -0700 (PDT)
+Received-SPF: none (google.com: elonmusk2024+bncbdfzvhpbxmgbb5fgv3iqmgqeh7fompy@isu.ac.in does not designate permitted sender hosts) client-ip=209.85.220.69;
+Authentication-Results: mx.google.com; dkim=pass header.i=@isu-ac-in.20251104.gappssmtp.com header.s=20251104 header.b=hJiZOK4A; arc=pass (i=3 spf=pass spfdomain=itm.edu dkim=pass dkdomain=itm.edu dmarc=pass fromdomain=itm.edu); spf=none (google.com: elonmusk2024+bncbdfzvhpbxmgbb5fgv3iqmgqeh7fompy@isu.ac.in does not designate permitted sender hosts) smtp.mailfrom=elonmusk2024+bncBDFZVHPBXMGBB5FGV3IQMGQEH7FOMPY@isu.ac.in; dmarc=fail (p=NONE sp=NONE dis=NONE arc=pass) header.from=itm.edu; dara=neutral header.i=@isu.ac.in
+ARC-Seal: i=3; a=rsa-sha256; t=1781240692; cv=pass; d=google.com; s=arc-20240605; b=W1BZL2COG71jfYj8N79WZgpF1id/StkAX4OUZRgotH5sNNRrRfte2yYHyH5I5EvGP3 ZKf5bYKxdi6h/5XlGAk9m61h8xfj8LXFJw8X4UMGGN3tCTV/jw+UfH9DgE5yWEoBnmPl mSUv9WKqnqE9LTRPg1BO0D8gApz/f+fSo2udKC8lBlg0yIVJOAAQ4x2mmIKrjn2MXjKR HGWwccCSQhsIyjxzK0S9fbx+6jGRKTINoyLeOQGJtvNqtzpwjQ9Csx1AMlZZDxPURGcz P0FhhuzGLqcIN/hla5SGVX3zbFwLLdTXHcT5so0SQhL9yje2MddNcajI1g9sisESG4tP DCNA==
+ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605; h=list-unsubscribe:list-archive:list-help:list-post:list-id :mailing-list:precedence:to:subject:message-id:date:from :mime-version:dkim-signature; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; fh=6Nf+lx+vtXgkDXHIMRYoCM/tr+b7JV6cXKZihtBPAt4=; b=RbRvAsqUbKNlFJ7KD6HjduJfPg5fjvK8anftD2fUqvuHkoIJXWUxjN3xcN2VvekT+p GeqOqqhTI0NbgJH5bZiM7HGiGf9CMjmmpkgh05CGMwIiFXCrWsMxuUYYsxsXg5FygzhN KSmto2CBSdTCQ2vq8k+g1jtgDql6YdpK0z8zR1nrp3yEulEA7B/k2sG3YS/8/4jsx7ud 7HONQF/m1Eqbu/C4meta6NiLDPwngDEbhDM7cYuGUuk/KVGFkN1jz/4OwmB++8NwBv0q 6yzUYtQTcxqnE53JvueT/7wtSyVbpHPt8RzrgTRWgUB/i8iAGbaMgkxv+ndKjtvclnO5 GAjg==; darn=isu.ac.in
+ARC-Authentication-Results: i=3; mx.google.com; dkim=pass header.i=@itm.edu header.s=google header.b=iGq78uQZ; arc=pass (i=1); spf=pass (google.com: domain of dipanjanb@itm.edu designates 209.85.220.41 as permitted sender) smtp.mailfrom=dipanjanb@itm.edu; dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=itm.edu; dara=neutral header.i=@isu.ac.in
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=isu-ac-in.20251104.gappssmtp.com; s=20251104; t=1781240692; x=1781845492; darn=isu.ac.in; h=list-unsubscribe:list-archive:list-help:list-post:list-id :mailing-list:precedence:x-original-authentication-results :x-original-sender:to:subject:message-id:date:from:mime-version:from :to:cc:subject:date:message-id:reply-to; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; b=hJiZOK4Avs4Lsn0uUWOUQ8VgBm9Zu7UJiMPeH1+tUi/yvcAx1GqrqBNKhjC+GjtObD sqYM6TCCv6IHNG4Ft4Awb3hoeJwOLGvpfs+uOM1XhE2E0jFxHHvHrYZiZDR4Nrl0ktCt SzvTT6DrgcjPk0jt8jyqZvrY+lra1tmnBtaHOHoq+UAuKpOvfW+EyJ9dJJSNk/w/k3en 0fmXuq0DetaCERBVRo0BkprYgPZ44dtmtRPCq8o7xCbxughS/aGUylrR7qTu5bJ17pWL Q3f9Dy1fgi29hMuorl6xus7y7mwT3fC+MFCzlvjLPw84hTdqkKmjSXXJAJfy4lP1/Mpc TJ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20251104; t=1781240692; x=1781845492; h=list-unsubscribe:list-archive:list-help:list-post :x-spam-checked-in-group:list-id:mailing-list:precedence :x-original-authentication-results:x-original-sender:to:subject :message-id:date:from:mime-version:x-gm-gg:x-beenthere :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; b=rj2m8/chz+6JEe+0XvhwXpq3MwdGFjrmkjHjxf4e8Kc0t22WODkV8BFX7Io8DTrPB+ QSo0HSzdkqVF1VzL1Nu63VdvWrf4ilgpySaugHM9j6VWZ0lGwPxEjL3hp1ZRwQ7XijW4 Je3beSNC5oAuGROX+TY4wJtZToTMYDCo1K5hUykK8i25reskGNMyJgIEIYcwCHU+taBD h861FR6O3wsbTV/BJL65+G4pbTizJB4Rb8ahOZRUxh9IFT/sxWuTne4IUQrcBBEmJc4W HvVBGFLlgys1L91uLdsxd87w5EvtEyNA4KYO4OCBp9cPXe8Xcea8SEZMO2nCQdq3sxoi k0Tg==
+X-Forwarded-Encrypted: i=3; AFNElJ889LdDNpYJLoaY8S21L23w5rq91/42/vQ0B6uyNaNKMR3euSqZgCcsMmH/w3YPLk9bF0vCoqUzRvJ56K3rag==@isu.ac.in
+X-Gm-Message-State: AOJu0YzE/KD9/XsnWZQib7BOepn3+fm1O55aGGSlrhd+FlzWTjnshFT6 s5HkqUAY/CgsvO0AAQcqZB4KgPQqF6JpBW7Csrt2O2NaIklLynCrfm+Dizk/dUeS0qQRvw==
+X-Received: by 2002:a17:902:fc8d:b0:2b9:6458:1a2c with SMTP id d9443c01a7336-2c4109ecfc5mr17025345ad.13.1781240692420; Thu, 11 Jun 2026 22:04:52 -0700 (PDT)
+X-BeenThere: elonmusk2024@isu.ac.in; h="AX0PUUdqurnCSqLZpuy+DfSrUuZ4EibyHPk62KgRJM+wOE2xng=="
+Received: by 2002:a17:903:384f:b0:2c0:f1ad:f3b2 with SMTP id d9443c01a7336-2c3f04d3a4fls6681025ad.1.-pod-prod-03-us; Thu, 11 Jun 2026 22:04:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=3; AFNElJ+h9UEDyvGAMhqCHQxTVM26AaKcPRJFFbFJtZGLrypYLXeqOrkialnZsJX9Qqk/r2iEmKIDSMtay3kbFbo=@isu.ac.in
+X-Received: by 2002:a17:903:166e:b0:2c1:5135:39f3 with SMTP id d9443c01a7336-2c4109ed1a9mr16819025ad.11.1781240691177; Thu, 11 Jun 2026 22:04:51 -0700 (PDT)
+ARC-Seal: i=2; a=rsa-sha256; t=1781240691; cv=pass; d=google.com; s=arc-20240605; b=Oi068CcsZmzfGrdJJW7WQsu+lo8pLanUkeltNB1Ss3CrtsrQzGGFhLfoo+QXE9ezQ1 rptjWgj6S4VyYUgNmNQf39/hzaiI8aBKkCDMpmcT2Ov/fHFpxhjd70v/GuTrqyJ5VZrQ J5nCycp/fwy+2Sxwwn0IhqTc1BstAoAtbDzQ2zdPoZVMfDHx/MVEvwYoGwaweT9LaAOY KyvVsJuAFTvoWoa9PhYerOi1oxWIWTNvxsoe53wcoqpcLuQF1u40ZxbWBCG7rrvAE4rt UBxbEK0LwwpnGAmYnkhtxBo3XGcLKtKDdgCpVTfk6W+exQ+kp5pZ9b7LiUgSWHD83zL7 0q7w==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605; h=to:subject:message-id:date:from:mime-version:dkim-signature; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; fh=HOASb6tGIZ8Rcmm2Z5x856+aIscBrx2bbZdUmiYV4Ws=; b=J64FziYgxqwfhzcbYtpcRxZ2XbAa5gg1xRlcMCWnt0Y2HC6uScSFf/bMTnrD9ZbHFf ufCKvEnQz0jp5W5rPlOyA3roX56LSmmz9oC4afqLeM24RRp8pfYVCQ2vjM6Yf68qopv6 QmVexbqKo1Q2yMP+lMkuJswkhSMP7UayriV1TS8+FG+k0gYgvwh9A5PmvSzNqpPJU3QJ it4Ud9NRgvFKEEUt8gJ39/yoiIokXGYqib8Ti/QcH+ojE+pZL31iuCpYdbL/WMg2p94K fztsLvCdXLfuSQMNBfpy4RUs4pDT+A3WVImsD7qjJdLL6+14qP4hQjriqpDcIqCcnGNf LEvw==; dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com; dkim=pass header.i=@itm.edu header.s=google header.b=iGq78uQZ; arc=pass (i=1); spf=pass (google.com: domain of dipanjanb@itm.edu designates 209.85.220.41 as permitted sender) smtp.mailfrom=dipanjanb@itm.edu; dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=itm.edu; dara=neutral header.i=@isu.ac.in
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41]) by mx.google.com with SMTPS id d9443c01a7336-2c431ee4bd1sor6500615ad.9.2026.06.11.22.04.51 for <elonmusk2024@isu.ac.in> (Google Transport Security); Thu, 11 Jun 2026 22:04:51 -0700 (PDT)
+Received-SPF: pass (google.com: domain of dipanjanb@itm.edu designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+ARC-Seal: i=1; a=rsa-sha256; t=1781240691; cv=none; d=google.com; s=arc-20240605; b=fjmKzKauq2RY/6XDHiT0l0F/ueWTs3hsHgdTkpyGTs7rWk5qCRaqAauI0T0rpXZXUZ VPYo0b2pScWghHEqmqJTze5Oz8g5oME1orgn8kzUhuOp+HJFRrwfFFewiDEsqJmvxjcB JSwvHPaQKgT/ub24xXffZ9y9h/tG5b4Ogz1UHJ63LGkLdMkn5PlsMkd3IlZdahYX8EDq SRizAO11G3BFElzyFrclt630DFaXWhQ8Mtwf3DX+mi/HT+4kLSdJStmrZnZyCfiCyv5x 58pKZrJrwJrf/WF26wHYb/bEpdlxFk07fo7/wDP9Hv7FWDbgUkHO+msBix5DikgAv80x 6Fiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605; h=to:subject:message-id:date:from:mime-version:dkim-signature; bh=I+Y4CC6k/+LfdOTuggN4r/SWJzZE0ROZZ1T4PRpZ4CU=; fh=HOASb6tGIZ8Rcmm2Z5x856+aIscBrx2bbZdUmiYV4Ws=; b=jz2/e5di0F2jHf6UM1vMCs7hFduU9AyVEhjv3yteR3Wscwh77H8t84uT5qDfWM9FM/ OZ9fG1+ftgA+lvaplRSwUOXGkdsQwwYH3SnCJLLKkJLcySFFcxIGkZ/MW9ytZN20H7nk oWvFR4uYk2GE5LvdgjFVyZq6gyk/36p1ZC1IlDGBbFraE5OhMP1r/kRjtg/FzfmVP/cd RLQCqxWzaiZ0YnB5bGEIxxsizWEQd1p7RTZoTtOJQttCVtFpPl9B6gbm266lcfSrGkft QDN0XppmLvn+ifsS4urDyifuXZlod4mTkBpbkUA2fGqk0ysXjgC5y6nT/Ch/46dIwZg7 9/pg==; darn=isu.ac.in
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Forwarded-Encrypted: i=1; AFNElJ9Rid5x4uCbiR5blM221wQY2P4WZFpF/nQ+/W7X0RV+xzMB03K7bjKsNYgV1um3Lzu4fLASP8dp71FLmOE=@isu.ac.in
+X-Gm-Gg: Acq92OGvrXttMbsZfyF1R8O6o9sljEwEP8Pry44UpEKjJk0xp4OMq/IdsRHQnezrIWU SB15opUNggKAXLgmSJHG5KvkZ/31iR51FNRErtYyyCjuIKcba5BJTtgrrDER9suhPCYgRae2aiC kCQwcN+2BqeQnZvHVGgWEDKXiYCWWCfK13UXPmcwaXFwAnL7aIHJQ4obEHgy9DtW84VB/FJ/s6r gvvKpG/lpKjjMa8VDT9lDU3TOTLPoCnH7tQ2YvG9WJNEoxEbgZiixbS9APObc8sfbRMrxPsO/QP hf6Apws=
+X-Received: by 2002:a17:903:2ec8:b0:2c2:bd7f:ccd4 with SMTP id d9443c01a7336-2c411d7b13dmr17838485ad.21.1781240690505; Thu, 11 Jun 2026 22:04:50 -0700 (PDT)
+MIME-Version: 1.0
+From: "Dr. Dipanjan Sikhan Biswas (Assistant Professor-ISU Engineering, Kharghar)" <dipanjanb@itm.edu>
+Date: Fri, 12 Jun 2026 10:34:39 +0530
+X-Gm-Features: AVVi8Ce7QRGwZHhMB69n7JWEMcAlNsj4qqv8IOnxGIc4oGZ1owfCvArcEnv0yBw
+Message-ID: <CAJiXeuYeTUtBJq144mqFFAwVg3sG4zJyH0+YnnZ0DEYCUXAF1g@mail.gmail.com>
+Subject: Deliverables for DevOps Case Studies
+To: jensenhuang2024@isu.ac.in, elonmusk2024@isu.ac.in, markzuckurburg2024@isu.ac.in, "Dr. Aarti Shailendrasingh Pardeshi (Assistant Professor-HOD-Computer Science, Kharghar)" <aartip@itm.edu>, "Kalpana Kumaran (Assistant Director, Kharghar)" <kalpanas@itm.edu>, "Sneha Gaurav Gawas (Assistant Professor-Computer Science, Kharghar)" <snehag@itm.edu>, "Vinaya Kulkarni (Assistant Professor-Business Analytics, Kharghar)" <vinayak@itm.edu>, "Poonam Suresh Khanvilkar (Assistant Professor-Computer Science, Kharghar)" <poonams@itm.edu>, "Prasad Shridhar Junghare (Assistant Professor-Computer Science - B.Tech, Kharghar)" <prasadj@itm.edu>, "Chandrika Shivaji Kamble (Assistant Professor-Computer Science, Kharghar)" <chandrikak@itm.edu>, "Meet Devlia (Ops Associate - BTech CSE ISU)" <meetd@itm.edu>
+Content-Type: multipart/alternative; boundary="0000000000009e07ff0654076acc"
+X-Original-Sender: dipanjanb@itm.edu
+X-Original-Authentication-Results: mx.google.com;
+       dkim=pass header.i=@itm.edu header.s=google header.b=iGq78uQZ;
+       arc=pass (i=1); spf=pass (google.com: domain of dipanjanb@itm.edu designates 209.85.220.41 as permitted sender) smtp.mailfrom=dipanjanb@itm.edu; dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=itm.edu; dara=neutral header.i=@isu.ac.in
+Precedence: list
+Mailing-list: list elonmusk2024@isu.ac.in; contact elonmusk2024+owners@isu.ac.in
+List-ID: <elonmusk2024.isu.ac.in>
+X-Spam-Checked-In-Group: elonmusk2024@isu.ac.in
+X-Google-Group-Id: 1076248626704
+List-Post: <https://groups.google.com/a/isu.ac.in/group/elonmusk2024/post>, <mailto:elonmusk2024@isu.ac.in>
+List-Help: <https://support.google.com/a/isu.ac.in/bin/topic.py?topic=25838>, <mailto:elonmusk2024+help@isu.ac.in>
+List-Archive: <https://groups.google.com/a/isu.ac.in/group/elonmusk2024/>
+List-Unsubscribe: <mailto:googlegroups-manage+1076248626704+unsubscribe@googlegroups.com>, <https://groups.google.com/a/isu.ac.in/group/elonmusk2024/subscribe>
+
+--0000000000009e07ff0654076acc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear Students,
+Though I have discussed the deliverables for the respective case studies
+verbally, here is the documentation for the same to make the things
+simpler. The link for doubt solving will be open for any further
+clarification.
+
+
+Important Clarification
+
+For every case study, you are NOT expected to build only Jenkins pipelines,
+Docker containers, Terraform scripts, or Kubernetes deployments.
+
+You must first build a small working business application related to your
+assigned domain and then implement the complete DevOps lifecycle around it.
+
+The application can be simple and demonstrate core functionality only.
+------------------------------
+Case Studies 1=E2=80=93201. Mobile Wallet Ecosystem
+
+Deliverable:
+Build a Wallet Web Application where users can register, add money,
+transfer money, and view transaction history.
+2. Real-Time Fraud Detection Platform
+
+Deliverable:
+Build a Fraud Detection Dashboard that identifies suspicious transactions
+and displays alerts.
+3. Electronic Health Records Platform
+
+Deliverable:
+Build a Patient Records Management Web Application for storing and viewing
+patient information.
+4. Hospital Appointment Scheduling Platform
+
+Deliverable:
+Build a Doctor Appointment Booking Web Application.
+5. Multi-Vendor Commerce Platform
+
+Deliverable:
+Build an Amazon-like Marketplace where multiple vendors can sell products.
+6. Grocery Delivery Platform
+
+Deliverable:
+Build an Online Grocery Ordering and Delivery Tracking Application.
+7. Virtual Classroom Platform
+
+Deliverable:
+Build a Virtual Learning Platform supporting courses, classes, and student
+enrollment.
+8. Digital Certification Management System
+
+Deliverable:
+Build a Certificate Generation and Verification Portal.
+9. Telecom Billing System
+
+Deliverable:
+Build a Telecom Billing Application for generating customer bills.
+10. Network Monitoring & Fault Management Platform
+
+Deliverable:
+Build a Network Monitoring Dashboard showing device status and alerts.
+11. Loan Origination Management System
+
+Deliverable:
+Build a Loan Application and Approval Management Portal.
+12. Digital KYC Verification Platform
+
+Deliverable:
+Build a Customer KYC Verification Application supporting document uploads.
+13. Pharmacy Management Platform
+
+Deliverable:
+Build a Pharmacy Inventory and Prescription Management System.
+14. Diagnostic Laboratory Management Portal
+
+Deliverable:
+Build a Lab Test Booking and Report Management Portal.
+15. Fashion Retail Commerce Platform
+
+Deliverable:
+Build an Online Fashion Shopping Platform.
+16. Warehouse Fulfillment Management System
+
+Deliverable:
+Build an Inventory and Warehouse Tracking Application.
+17. Student Analytics Dashboard
+
+Deliverable:
+Build an Educational Analytics Dashboard showing student performance.
+18. Online Examination Platform
+
+Deliverable:
+Build an Online Examination and Quiz Portal.
+19. 5G Service Orchestration Platform
+
+Deliverable:
+Build a Telecom Service Provisioning Dashboard.
+20. SIM Provisioning Automation Platform
+
+Deliverable:
+Build a SIM Activation and Management Portal.
+------------------------------
+Case Studies 21=E2=80=934021. Global Marketplace Platform Modernization
+
+Deliverable:
+Build a Large-Scale E-Commerce Marketplace.
+22. AI-Powered Product Recommendation Engine
+
+Deliverable:
+Build an ML-Based Product Recommendation System.
+23. Subscription-Based Video Streaming Platform
+
+Deliverable:
+Build a Netflix-like Video Streaming Portal.
+24. Smart Manufacturing Operations Platform
+
+Deliverable:
+Build a Manufacturing Monitoring Dashboard with IoT Simulation.
+25. Enterprise Learning Management Ecosystem
+
+Deliverable:
+Build a Complete Learning Management System (LMS).
+26. Airline Reservation & Revenue Management Platform
+
+Deliverable:
+Build a Flight Booking and Reservation Portal.
+27. National Healthcare Data Exchange Platform
+
+Deliverable:
+Build a Secure Healthcare Data Exchange API Platform.
+28. Autonomous Fleet Management Platform
+
+Deliverable:
+Build a Vehicle Tracking and Fleet Analytics Dashboard.
+29. Global Supply Chain Visibility Network
+
+Deliverable:
+Build a Shipment Tracking and Logistics Portal.
+30. National Smart City Traffic Intelligence Platform
+
+Deliverable:
+Build a Smart Traffic Monitoring Dashboard.
+31. Real-Time Stock Market Analytics Platform
+
+Deliverable:
+Build a Stock Market Analytics Dashboard.
+32. SOC Automation Platform
+
+Deliverable:
+Build a Security Monitoring and Incident Response Dashboard.
+33. Project Sentinel SOC Platform
+
+Deliverable:
+Build an Enterprise Security Operations Dashboard.
+34. National Energy Grid Monitoring Platform
+
+Deliverable:
+Build a Power Grid Monitoring Dashboard.
+35. Global Logistics Visibility Network
+
+Deliverable:
+Build a Global Logistics Tracking Portal.
+36. Autonomous Fleet Management Platform
+
+Deliverable:
+Build a Real-Time Vehicle Telemetry Dashboard.
+37. Insurance Claims Automation Platform
+
+Deliverable:
+Build an Insurance Claims Processing Portal.
+38. Industrial Digital Twin Analytics Platform
+
+Deliverable:
+Build a Digital Twin Analytics Dashboard.
+39. Government Citizen Services Platform
+
+Deliverable:
+Build a Citizen Service Delivery Portal.
+40. Enterprise AI Model Serving Infrastructure
+
+Deliverable:
+Build an AI Inference API Platform.
+------------------------------
+Case Studies 41=E2=80=9380
+
+For all remaining case studies, identify the business domain and build the
+corresponding platform:
+
+Examples:
+
+Case 41 =E2=80=93 Global Media Streaming Platform
+=E2=86=92 Video Streaming Application
+
+Case 42 =E2=80=93 Cryptocurrency Exchange Platform
+=E2=86=92 Crypto Trading Portal
+
+Case 43 =E2=80=93 Remote Patient Monitoring Platform
+=E2=86=92 Healthcare Monitoring Dashboard
+
+Case 44 =E2=80=93 SaaS Collaboration Platform
+=E2=86=92 Microsoft Teams/Slack-like Collaboration Platform
+
+Case 45 =E2=80=93 Air Traffic Operations Platform
+=E2=86=92 Air Traffic Monitoring Dashboard
+
+Case 46 =E2=80=93 Precision Agriculture Analytics Platform
+=E2=86=92 Smart Farming Analytics Dashboard
+
+Case 47 =E2=80=93 Emergency Response Coordination Platform
+=E2=86=92 Emergency Incident Management Portal
+
+Case 48 =E2=80=93 Commodity Trading Platform
+=E2=86=92 Trading and Market Analytics Dashboard
+
+Case 49 =E2=80=93 Omnichannel Retail Platform
+=E2=86=92 Unified Retail Management System
+
+Case 50+ onwards
+=E2=86=92 Build the corresponding business application, dashboard, API plat=
+form,
+monitoring platform, analytics system, or management portal based on the
+problem statement.
+------------------------------
+Common Deliverables for EVERY Case Study
+
+Every team must submit:
+
+   1.
+
+   Working Application (Web App / Dashboard / API)
+   2.
+
+   Source Code Repository (GitHub)
+   3.
+
+   Dockerfile and Docker Images
+   4.
+
+   Jenkins CI/CD Pipeline
+   5.
+
+   Terraform Infrastructure Scripts
+   6.
+
+   Kubernetes Deployment Files
+   7.
+
+   Monitoring using Prometheus and Grafana
+   8.
+
+   Logging using ELK Stack
+   9.
+
+   Secret Management using Vault
+   10.
+
+   Architecture Diagram
+   11.
+
+   Deployment Diagram
+   12.
+
+   Disaster Recovery Plan
+   13.
+
+   Demonstration Screenshots
+   14.
+
+   Project Documentation
+
+"Build a small but functional business application first. Then demonstrate
+how DevOps tools automate deployment, scaling, monitoring, recovery, and
+security of that application."
+
+
+[image: Kind regards,]
+
+Dr.Dipanjan Biswas
+Assistant Professor - ISU Engineering
+ITM Group of Institutions
+
+[image: icon] 9 <9987090117>892718506
+
+[image: icon] www.itm.edu
+
+[image: icon] dipanjanb@itm.edu <aartip@itm.edu>
+
+[image: icon] Plot 25 & 26, Institutional Area, Sector 4, Kharghar, Navi
+Mumbai, Maharashtra 410210
+<https://maps.google.com/?q=3DPlot+25+&+26,+Institutional+Area,+Sector+4,+K=
+harghar,+Navi+Mumbai,+Maharashtra+410210>
+
+--0000000000009e07ff0654076acc
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Dear Students,</div><div>Though I have discussed the =
+deliverables for the respective=C2=A0case studies verbally, here is the doc=
+umentation for the same to make the things simpler. The link for doubt solv=
+ing will be open for any further clarification.</div><div><br></div><div><p=
+><br></p><h2>Important Clarification</h2><p>For every case study, you are N=
+OT expected to build only Jenkins pipelines, Docker containers, Terraform s=
+cripts, or Kubernetes deployments.</p><p>You must first build a small worki=
+ng business application related to your assigned domain and then implement =
+the complete DevOps lifecycle around it.</p><p>The application can be simpl=
+e and demonstrate core functionality only.</p><hr><h1>Case Studies 1=E2=80=
+=9320</h1><h3>1. Mobile Wallet Ecosystem</h3><p>Deliverable:<br>Build a Wal=
+let Web Application where users can register, add money, transfer money, an=
+d view transaction history.</p><h3>2. Real-Time Fraud Detection Platform</h=
+3><p>Deliverable:<br>Build a Fraud Detection Dashboard that identifies susp=
+icious transactions and displays alerts.</p><h3>3. Electronic Health Record=
+s Platform</h3><p>Deliverable:<br>Build a Patient Records Management Web Ap=
+plication for storing and viewing patient information.</p><h3>4. Hospital A=
+ppointment Scheduling Platform</h3><p>Deliverable:<br>Build a Doctor Appoin=
+tment Booking Web Application.</p><h3>5. Multi-Vendor Commerce Platform</h3=
+><p>Deliverable:<br>Build an Amazon-like Marketplace where multiple vendors=
+ can sell products.</p><h3>6. Grocery Delivery Platform</h3><p>Deliverable:=
+<br>Build an Online Grocery Ordering and Delivery Tracking Application.</p>=
+<h3>7. Virtual Classroom Platform</h3><p>Deliverable:<br>Build a Virtual Le=
+arning Platform supporting courses, classes, and student enrollment.</p><h3=
+>8. Digital Certification Management System</h3><p>Deliverable:<br>Build a =
+Certificate Generation and Verification Portal.</p><h3>9. Telecom Billing S=
+ystem</h3><p>Deliverable:<br>Build a Telecom Billing Application for genera=
+ting customer bills.</p><h3>10. Network Monitoring &amp; Fault Management P=
+latform</h3><p>Deliverable:<br>Build a Network Monitoring Dashboard showing=
+ device status and alerts.</p><h3>11. Loan Origination Management System</h=
+3><p>Deliverable:<br>Build a Loan Application and Approval Management Porta=
+l.</p><h3>12. Digital KYC Verification Platform</h3><p>Deliverable:<br>Buil=
+d a Customer KYC Verification Application supporting document uploads.</p><=
+h3>13. Pharmacy Management Platform</h3><p>Deliverable:<br>Build a Pharmacy=
+ Inventory and Prescription Management System.</p><h3>14. Diagnostic Labora=
+tory Management Portal</h3><p>Deliverable:<br>Build a Lab Test Booking and =
+Report Management Portal.</p><h3>15. Fashion Retail Commerce Platform</h3><=
+p>Deliverable:<br>Build an Online Fashion Shopping Platform.</p><h3>16. War=
+ehouse Fulfillment Management System</h3><p>Deliverable:<br>Build an Invent=
+ory and Warehouse Tracking Application.</p><h3>17. Student Analytics Dashbo=
+ard</h3><p>Deliverable:<br>Build an Educational Analytics Dashboard showing=
+ student performance.</p><h3>18. Online Examination Platform</h3><p>Deliver=
+able:<br>Build an Online Examination and Quiz Portal.</p><h3>19. 5G Service=
+ Orchestration Platform</h3><p>Deliverable:<br>Build a Telecom Service Prov=
+isioning Dashboard.</p><h3>20. SIM Provisioning Automation Platform</h3><p>=
+Deliverable:<br>Build a SIM Activation and Management Portal.</p><hr><h1>Ca=
+se Studies 21=E2=80=9340</h1><h3>21. Global Marketplace Platform Modernizat=
+ion</h3><p>Deliverable:<br>Build a Large-Scale E-Commerce Marketplace.</p><=
+h3>22. AI-Powered Product Recommendation Engine</h3><p>Deliverable:<br>Buil=
+d an ML-Based Product Recommendation System.</p><h3>23. Subscription-Based =
+Video Streaming Platform</h3><p>Deliverable:<br>Build a Netflix-like Video =
+Streaming Portal.</p><h3>24. Smart Manufacturing Operations Platform</h3><p=
+>Deliverable:<br>Build a Manufacturing Monitoring Dashboard with IoT Simula=
+tion.</p><h3>25. Enterprise Learning Management Ecosystem</h3><p>Deliverabl=
+e:<br>Build a Complete Learning Management System (LMS).</p><h3>26. Airline=
+ Reservation &amp; Revenue Management Platform</h3><p>Deliverable:<br>Build=
+ a Flight Booking and Reservation Portal.</p><h3>27. National Healthcare Da=
+ta Exchange Platform</h3><p>Deliverable:<br>Build a Secure Healthcare Data =
+Exchange API Platform.</p><h3>28. Autonomous Fleet Management Platform</h3>=
+<p>Deliverable:<br>Build a Vehicle Tracking and Fleet Analytics Dashboard.<=
+/p><h3>29. Global Supply Chain Visibility Network</h3><p>Deliverable:<br>Bu=
+ild a Shipment Tracking and Logistics Portal.</p><h3>30. National Smart Cit=
+y Traffic Intelligence Platform</h3><p>Deliverable:<br>Build a Smart Traffi=
+c Monitoring Dashboard.</p><h3>31. Real-Time Stock Market Analytics Platfor=
+m</h3><p>Deliverable:<br>Build a Stock Market Analytics Dashboard.</p><h3>3=
+2. SOC Automation Platform</h3><p>Deliverable:<br>Build a Security Monitori=
+ng and Incident Response Dashboard.</p><h3>33. Project Sentinel SOC Platfor=
+m</h3><p>Deliverable:<br>Build an Enterprise Security Operations Dashboard.=
+</p><h3>34. National Energy Grid Monitoring Platform</h3><p>Deliverable:<br=
+>Build a Power Grid Monitoring Dashboard.</p><h3>35. Global Logistics Visib=
+ility Network</h3><p>Deliverable:<br>Build a Global Logistics Tracking Port=
+al.</p><h3>36. Autonomous Fleet Management Platform</h3><p>Deliverable:<br>=
+Build a Real-Time Vehicle Telemetry Dashboard.</p><h3>37. Insurance Claims =
+Automation Platform</h3><p>Deliverable:<br>Build an Insurance Claims Proces=
+sing Portal.</p><h3>38. Industrial Digital Twin Analytics Platform</h3><p>D=
+eliverable:<br>Build a Digital Twin Analytics Dashboard.</p><h3>39. Governm=
+ent Citizen Services Platform</h3><p>Deliverable:<br>Build a Citizen Servic=
+e Delivery Portal.</p><h3>40. Enterprise AI Model Serving Infrastructure</h=
+3><p>Deliverable:<br>Build an AI Inference API Platform.</p><hr><h1>Case St=
+udies 41=E2=80=9380</h1><p>For all remaining case studies, identify the bus=
+iness domain and build the corresponding platform:</p><p>Examples:</p><p>Ca=
+se 41 =E2=80=93 Global Media Streaming Platform<br>=E2=86=92 Video Streamin=
+g Application</p><p>Case 42 =E2=80=93 Cryptocurrency Exchange Platform<br>=
+=E2=86=92 Crypto Trading Portal</p><p>Case 43 =E2=80=93 Remote Patient Moni=
+toring Platform<br>=E2=86=92 Healthcare Monitoring Dashboard</p><p>Case 44 =
+=E2=80=93 SaaS Collaboration Platform<br>=E2=86=92 Microsoft Teams/Slack-li=
+ke Collaboration Platform</p><p>Case 45 =E2=80=93 Air Traffic Operations Pl=
+atform<br>=E2=86=92 Air Traffic Monitoring Dashboard</p><p>Case 46 =E2=80=
+=93 Precision Agriculture Analytics Platform<br>=E2=86=92 Smart Farming Ana=
+lytics Dashboard</p><p>Case 47 =E2=80=93 Emergency Response Coordination Pl=
+atform<br>=E2=86=92 Emergency Incident Management Portal</p><p>Case 48 =E2=
+=80=93 Commodity Trading Platform<br>=E2=86=92 Trading and Market Analytics=
+ Dashboard</p><p>Case 49 =E2=80=93 Omnichannel Retail Platform<br>=E2=86=92=
+ Unified Retail Management System</p><p>Case 50+ onwards<br>=E2=86=92 Build=
+ the corresponding business application, dashboard, API platform, monitorin=
+g platform, analytics system, or management portal based on the problem sta=
+tement.</p><hr><h1>Common Deliverables for EVERY Case Study</h1><p>Every te=
+am must submit:</p><ol><li><p>Working Application (Web App / Dashboard / AP=
+I)</p></li><li><p>Source Code Repository (GitHub)</p></li><li><p>Dockerfile=
+ and Docker Images</p></li><li><p>Jenkins CI/CD Pipeline</p></li><li><p>Ter=
+raform Infrastructure Scripts</p></li><li><p>Kubernetes Deployment Files</p=
+></li><li><p>Monitoring using Prometheus and Grafana</p></li><li><p>Logging=
+ using ELK Stack</p></li><li><p>Secret Management using Vault</p></li><li><=
+p>Architecture Diagram</p></li><li><p>Deployment Diagram</p></li><li><p>Dis=
+aster Recovery Plan</p></li><li><p>Demonstration Screenshots</p></li><li><p=
+>Project Documentation</p></li></ol><p>&quot;Build a small but functional b=
+usiness application first. Then demonstrate how DevOps tools automate deplo=
+yment, scaling, monitoring, recovery, and security of that application.&quo=
+t;</p><p><br></p></div><div dir=3D"ltr" class=3D"gmail_signature" data-smar=
+tmail=3D"gmail_signature"><div dir=3D"ltr"><table cellpadding=3D"0" cellspa=
+cing=3D"0" style=3D"color:rgb(80,0,80);border-collapse:collapse"><tbody><tr=
+><td style=3D"line-height:1.08;padding:0.01px"><p></p><p><img></p><img src=
+=3D"https://s3.amazonaws.com/apps.wisestamp.com/assets/signoff/new/bas/k_re=
+gards.gif" alt=3D"Kind regards," width=3D"200" height=3D"75"><p><img></p><p=
+ style=3D"margin:0.1px;line-height:17.28px;font-size:16px"><span style=3D"f=
+ont-family:Arial;font-weight:bold;color:rgb(84,41,225);letter-spacing:0px">=
+Dr.Dipanjan Biswas</span><br><span style=3D"font-family:Arial;font-size:13p=
+x;font-weight:bold;color:rgb(33,33,33)">Assistant Professor - ISU Engineeri=
+ng=C2=A0</span><br><span style=3D"font-family:Arial;font-size:13px;font-wei=
+ght:bold;color:rgb(140,15,94)">ITM Group of Institutions</span></p></td></t=
+r><tr><td><table cellpadding=3D"0" cellspacing=3D"0" style=3D"border-collap=
+se:collapse"><tbody><tr><td nowrap width=3D"84" style=3D"padding-top:12px;w=
+idth:84px;font-family:Arial"><p style=3D"margin:1px;line-height:10.89px;fon=
+t-size:11px"><img src=3D"https://cdn.gifo.wisestamp.com/s/rfm1/45668E/26/tr=
+ans.png" width=3D"11" alt=3D"icon" style=3D"line-height:13.2px;width:11px">=
+=C2=A0<a href=3D"tel:9987090117" rel=3D"nofollow noreferrer" style=3D"color=
+:rgb(17,85,204);text-decoration:unset" target=3D"_blank"><span style=3D"lin=
+e-height:13.2px;color:rgb(33,33,33)">9</span></a>892718506</p></td></tr><tr=
+><td nowrap width=3D"92" style=3D"padding-top:6px;width:92px;font-family:Ar=
+ial"><p style=3D"margin:1px;line-height:10.89px;font-size:11px"><img src=3D=
+"https://cdn.gifo.wisestamp.com/s/rfw1/45668E/26/trans.png" width=3D"11" al=
+t=3D"icon" style=3D"line-height:13.2px;width:11px">=C2=A0<a href=3D"http://=
+www.itm.edu/" rel=3D"nofollow noreferrer" style=3D"color:rgb(17,85,204);tex=
+t-decoration:unset" target=3D"_blank"><span style=3D"line-height:13.2px;col=
+or:rgb(33,33,33)">www.itm.edu</span></a></p></td></tr><tr><td nowrap width=
+=3D"113" style=3D"padding-top:6px;width:113px;font-family:Arial"><p style=
+=3D"margin:1px;line-height:10.89px;font-size:11px"><img src=3D"https://cdn.=
+gifo.wisestamp.com/s/rfem1/45668E/26/trans.png" width=3D"11" alt=3D"icon" s=
+tyle=3D"line-height:13.2px;width:11px">=C2=A0dipanjanb<a href=3D"mailto:aar=
+tip@itm.edu" rel=3D"nofollow noreferrer" style=3D"color:rgb(17,85,204);text=
+-decoration:unset" target=3D"_blank"><span style=3D"line-height:13.2px;colo=
+r:rgb(33,33,33)">@itm.edu</span></a></p></td></tr><tr><td nowrap width=3D"5=
+98" style=3D"padding-top:6px;width:598px;font-family:Arial"><p style=3D"mar=
+gin:1px;line-height:10.89px;font-size:11px"><img src=3D"https://cdn.gifo.wi=
+sestamp.com/s/rfa2/45668E/26/trans.png" width=3D"11" alt=3D"icon" style=3D"=
+line-height:13.2px;width:11px">=C2=A0<a href=3D"https://maps.google.com/?q=
+=3DPlot+25+&amp;+26,+Institutional+Area,+Sector+4,+Kharghar,+Navi+Mumbai,+M=
+aharashtra+410210" rel=3D"nofollow noreferrer" style=3D"color:rgb(17,85,204=
+);text-decoration:unset" target=3D"_blank"><span style=3D"line-height:13.2p=
+x;color:rgb(33,33,33)">Plot 25 &amp; 26, Institutional Area, Sector 4, Khar=
+ghar, Navi Mumbai, Maharashtra 410210</span></a></p></td></tr></tbody></tab=
+le></td></tr></tbody></table></div></div></div>
+
+--0000000000009e07ff0654076acc--

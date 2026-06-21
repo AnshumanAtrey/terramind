@@ -90,3 +90,27 @@ class SnapshotOut(CamelModel):
 class MarkerCreate(CamelModel):
     description: str
     priority: str = "high"
+
+
+class DetectionOut(CamelModel):
+    id: str
+    label: str
+    confidence: int
+    priority: str
+    status: str
+    grid_ref: str
+    detected_by: str
+    image_ref: str
+    ai_summary: str
+    source: str
+    lat: float
+    lon: float
+    created_at: int
+
+
+class DetectionPage(CamelModel):
+    items: list[DetectionOut]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
